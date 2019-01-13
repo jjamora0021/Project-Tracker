@@ -43,8 +43,7 @@
                                     <td class="text-center">{{ $value['date_end'] }}</td>
                                     <td class="text-center">P{{ number_format($value['total_project_cost']) }}</td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
+                                        <button class="btn btn-sm btn-info" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}');"><i class="fas fa-edit"></i></button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -57,6 +56,34 @@
 </div>
 
 <!-- View/Update Project -->
+<div class="container-fluid d-none" id="view-daily-progress-container">
+    <div class="col-md-12 page-header-container mb-2">
+        <div class="col-md-6 p-0">
+            <h2 id="site-name"></h2>
+        </div>
+        <div class="col-md-6 pt-2 text-right">
+            <button class="btn btn-warning btn-sm float-right ml-2 font-12 font-weight-bold" onclick="viewProjectContainer('view-daily-progress-container');">
+                <i class="fas fa-undo-alt"></i> Back
+            </button>
+        </div>
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-body">
+            <table class="table table-striped table-bordered" id="daily-progress-table" style="width:100%">
+                <!-- Days -->
+                <thead>
+                    <tr>
+                        <th>Activity/Scope Of Work</th>
+                    </tr>
+                </thead>
+                <!-- Scope Of Work -->
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 
 <!-- Add Proejct -->
 <div id="add-project-container" class="container-fluid d-none">
@@ -354,5 +381,50 @@
         .fail(function() {
             console.log("error");
         });
+    }
+
+    function viewDailyProgress(id, project_code, site_name)
+    {
+        $('#project-container').addClass('d-none')
+        $('#view-daily-progress-container').removeClass('d-none');
+
+        $('#view-daily-progress-container #site-name').empty().text(site_name);
+
+        $.ajax({
+            url: "{{ url('get-all-project-details') }}",
+            data: 
+            {
+                "id" : id,
+                "project_code" : project_code
+            },
+        })
+        .done(function(result) {
+            console.log(result);
+            var table_header = $('#daily-progress-table thead tr');
+            var table_body = $('#daily-progress-table tbody');
+            for (var i = 1; i < result['number_of_days']; i++) {
+                table_header.append('<th width="5%">Day '+i+'</th>');
+            }
+            $.each(result['boq_details'], function(index, value) {
+                console.log(value)
+            });
+            $('#daily-progress-table').DataTable({
+                fixedColumns: {
+                    leftColumns: 2
+                },
+                scrollX:        true,
+                fixedColumns:   true,
+                paging: false,
+            });
+        })
+        .fail(function() {
+            console.log("error");
+        });
+    }
+
+    function viewProjectContainer()
+    {
+        $('#project-container').removeClass('d-none')
+        $('#view-daily-progress-container').addClass('d-none');
     }
 </script>

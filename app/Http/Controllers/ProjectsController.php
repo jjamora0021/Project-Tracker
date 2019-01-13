@@ -23,6 +23,21 @@ class ProjectsController extends Controller
         $this->ProjectsModel = new \App\ProjectsModel;
     }
 
+    // Convert Objects to Array
+    function objectToArray($data)
+    {
+        if (is_array($data) || is_object($data))
+        {
+            $result = array();
+            foreach ($data as $key => $value)
+            {
+                $result[$key] = $this->objectToArray($value);
+            }
+            return $result;
+        }
+        return $data;
+    }
+
     public function getAllProjects()
     {
     	$projects = $this->ProjectsModel->getAllProjects();
@@ -33,7 +48,10 @@ class ProjectsController extends Controller
     {
         $boq_details = [];
         foreach ($request['row'] as $key => $value) {
-            $boq_details[$key] = $value;
+            $boq_details[$key]['controlnumber'] = $value['controlnumber'];
+            $boq_details[$key]['quantity'] = (int)$value['quantity'];
+            $boq_details[$key]['price'] = (int)$value['price'];
+            $boq_details[$key]['total'] = (int)$value['total'];
         }
         
         $data = array(
@@ -50,13 +68,45 @@ class ProjectsController extends Controller
         
         $result = $this->ProjectsModel->addProject($data);
 
-        if($result)
+        if($result != false)
         {
             return back()->with('success', 'Project added successfully.');
         }
         else
         {
             return back()->with('danger', 'Something went wrong. Please check your inputs and try again.');
+        }
+    }
+
+    public function getAllProjectDetails(Request $request)
+    {
+        $data = $this->ProjectsModel->getAllProjectDetails($request['id'],$request['project_code']);
+
+        if($data != false)
+        {
+            // calculate the timeframe in days of the project
+            $date_start = Carbon::parse($data['date_start']);
+            $date_end = Carbon::parse($data['date_end']);
+            $days = $date_start->diffInDays($date_end) + 1;
+
+            // convert BOQ details from object to array
+            $boq_details = $this->objectToArray(json_decode($data['boq_details']));
+            // converts Quantity, Price and Total from String to Integer
+            foreach ($boq_details as $key => $value) {
+                $boq_details[$key]['controlnumber'] = $value['controlnumber'];
+                $boq_details[$key]['quantity'] = (int)$value['quantity'];
+                $boq_details[$key]['price'] = (int)$value['price'];
+                $boq_details[$key]['total'] = (int)$value['total'];
+            }
+            // Get CTRL Number and Desciption
+            $data['boq_details'] = $boq_details;
+            $data['number_of_days'] = $days;
+
+            return response()->json($data);
+        }
+        else
+        {
+            return false;
         }
     }
 }

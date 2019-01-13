@@ -27,11 +27,15 @@ Route::get('home', 'HomeController@index')->name('home');
 /**
  * BOQs
  */
+
 // Get Details on a BOQ
 Route::get('get-boq-details', 'BOQManagementController@getBoqDetails');
 
 /**
  * Projects
  */
+
 // Add/Save New Project
 Route::post('add-project', 'ProjectsController@addProject');
+// Get All Details of a Project
+Route::get('get-all-project-details', 'ProjectsController@getAllProjectDetails');

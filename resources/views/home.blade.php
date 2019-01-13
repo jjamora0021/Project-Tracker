@@ -34,6 +34,24 @@
 <div id="content-wrapper">
     <!-- Tab panes -->
     <div class="tab-content">
+        <div class="container text-center">
+            @if(Session::has('success'))
+                <div class="alert alert-success text-center font-weight-bold">
+                    {{ Session::get('success') }}
+                    @php
+                    Session::forget('success');
+                    @endphp
+                </div>
+            @endif
+             @if(Session::has('danger'))
+                <div class="alert alert-danger text-center font-weight-bold">
+                    {{ Session::get('danger') }}
+                    @php
+                    Session::forget('danger');
+                    @endphp
+                </div>
+            @endif
+        </div>
         <div class="tab-pane active" id="dashboard">
             @include('tab-content.dashboard')
         </div>
@@ -50,6 +68,7 @@
 </div>
 
 <script type="text/javascript">
+    $('.alert').fadeOut(10000);
     function activateTab(id) {
         $('.sidebar').each(function(index, el) {
             $('.nav-item').removeClass('active');
