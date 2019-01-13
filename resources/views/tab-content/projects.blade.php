@@ -1,3 +1,4 @@
+<!-- Projects Table -->
 <div class="container-fluid" id="project-container">
     <div class="col-md-12 page-header-container mb-2">
         <div class="col-md-6 p-0">
@@ -20,12 +21,12 @@
                             <th>Project Code</th>
                             <th>Site Name</th>
                             <th>Location</th>
-                            <th>CCID</th>
-                            <th>Work Order Number</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Total Cost</th>
-                            <th id="actions">Actions</th>
+                            <th class="text-center">CCID</th>
+                            <th class="text-center">Work Order Number</th>
+                            <th class="text-center">Start Date</th>
+                            <th class="text-center">End Date</th>
+                            <th class="text-center">Total Cost</th>
+                            <th class="text-center" id="actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,14 +37,14 @@
                                     <td>{{ $value['project_code'] }}</td>
                                     <td>{{ $value['site_name'] }}</td>
                                     <td>{{ $value['location'] }}</td>
-                                    <td>{{ $value['ccid'] }}</td>
-                                    <td>{{ $value['work_order_number'] }}</td>
-                                    <td>{{ $value['date_start'] }}</td>
-                                    <td>{{ $value['date_end'] }}</td>
-                                    <td>{{ number_format($value['total_project_cost']) }}</td>
+                                    <td class="text-center">{{ $value['ccid'] }}</td>
+                                    <td class="text-center">{{ $value['work_order_number'] }}</td>
+                                    <td class="text-center">{{ $value['date_start'] }}</td>
+                                    <td class="text-center">{{ $value['date_end'] }}</td>
+                                    <td class="text-center">P{{ number_format($value['total_project_cost']) }}</td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i> Update</button>
-                                        <button class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i> Delete</button>
+                                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -55,7 +56,9 @@
     </div>
 </div>
 
+<!-- View/Update Project -->
 
+<!-- Add Proejct -->
 <div id="add-project-container" class="container-fluid d-none">
     <div class="col-md-12 page-header-container mb-2">
         <div class="col-md-6 p-0">
