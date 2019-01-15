@@ -69,6 +69,7 @@
 
 <script type="text/javascript">
     $('.alert').fadeOut(10000);
+    $('[data-toggle="tooltip"]').tooltip(); 
     function activateTab(id) {
         $('.sidebar').each(function(index, el) {
             $('.nav-item').removeClass('active');

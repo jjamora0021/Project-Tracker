@@ -139,8 +139,8 @@ label {
 
 //Data Tables
 table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_desc_disabled:before, table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:after {
-    right: 1em;
-    content: "" !important;
+  right: 1em;
+  content: "" !important;
 }
 
 .table td, .table th {
@@ -195,7 +195,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:before
 		width: 5% !important;
 	}
 	#actions {
-		width: 15% !important;
+		width: 5% !important;
 	} 
 }
 
@@ -223,4 +223,48 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:before
   padding:10px;
   font-size: 20px;
   color:blue;
+}
+
+#daily-progress-table {
+  overflow: scroll;
+  width: 100%;
+  thead {
+    tr {
+      th:first-child {
+        min-width: 210px;vertical-align: middle;
+      }
+      th {
+        min-width: 100px;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+table.dataTable.table-striped.DTFC_Cloned tbody tr:nth-of-type(odd) {
+  background-color: #F3F3F3;
+}
+
+table.dataTable.table-striped.DTFC_Cloned tbody tr:nth-of-type(even) {
+  background-color: white;
+}
+
+.DTFC_LeftBodyWrapper {
+  top: -15px !important;
+  .DTFC_LeftBodyLiner {
+    top: 1px !important;
+  }
+}
+
+.ajax-loader {
+  visibility: hidden;
+  background-color: rgba(255,255,255,0.7);
+  z-index: +100 !important;
+  width: 100%;
+}
+
+.ajax-loader img {
+  position: relative;
+  top:50%;
+  left:50%;
 }

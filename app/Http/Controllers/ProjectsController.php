@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\ProjectsModel;
+use App\BOQModel;
 
 use Carbon\Carbon;
 use DB;
@@ -12,6 +13,7 @@ use DB;
 class ProjectsController extends Controller
 {
 	protected $ProjectsModel;
+    protected $BOQModel;
     /**
      * Create a new controller instance.
      *
@@ -21,6 +23,7 @@ class ProjectsController extends Controller
     {
         $this->middleware('auth');
         $this->ProjectsModel = new \App\ProjectsModel;
+        $this->BOQModel = new \App\BOQModel;
     }
 
     // Convert Objects to Array
@@ -94,6 +97,10 @@ class ProjectsController extends Controller
             // converts Quantity, Price and Total from String to Integer
             foreach ($boq_details as $key => $value) {
                 $boq_details[$key]['controlnumber'] = $value['controlnumber'];
+                // get boq description
+                $boq_description = $this->BOQModel->getBoqDetails($value['controlnumber']);
+                $boq_details[$key]['boq_description'] = $boq_description['description'];
+
                 $boq_details[$key]['quantity'] = (int)$value['quantity'];
                 $boq_details[$key]['price'] = (int)$value['price'];
                 $boq_details[$key]['total'] = (int)$value['total'];

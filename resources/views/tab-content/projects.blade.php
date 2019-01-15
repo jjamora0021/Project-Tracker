@@ -5,7 +5,7 @@
             <h2>Projects</h2>
         </div>
         <div class="col-md-6 pt-2 text-right">
-            <button class="btn btn-primary btn-sm float-right ml-2 font-12 font-weight-bold" onclick="toggleContainer('project-container','add-project-container');">
+            <button class="btn btn-success btn-sm float-right ml-2 font-12 font-weight-bold" onclick="toggleContainer('project-container','add-project-container');">
                 <i class="fas fa-plus"></i> Add Project
             </button>
         </div>
@@ -43,7 +43,8 @@
                                     <td class="text-center">{{ $value['date_end'] }}</td>
                                     <td class="text-center">P{{ number_format($value['total_project_cost']) }}</td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-info" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}');"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['site_name'] }} Progress" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}');"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['site_name'] }}" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}');"><i class="fas fa-trash-alt"></i></button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -70,15 +71,11 @@
     
     <div class="card mb-3">
         <div class="card-body">
-            <table class="table table-striped table-bordered" id="daily-progress-table" style="width:100%">
-                <!-- Days -->
-                <thead>
-                    <tr>
-                        <th>Activity/Scope Of Work</th>
-                    </tr>
-                </thead>
-                <!-- Scope Of Work -->
-                <tbody></tbody>
+            <h4 class="mb-3"><i class="fas fa-tasks"></i> Daily Progress</h4>
+            <div class="ajax-loader">
+                <img src="{{ url('images/Spinner-1.gif') }}" class="img-responsive" />
+            </div>
+            <table class="table table-striped table-bordered" id="daily-progress-table" cellspacing="0" width="100%">
             </table>
         </div>
     </div>
@@ -203,8 +200,8 @@
                                     <td class="text-center" id="td-row-total-1">0</td>
                                     <input type="hidden" value="0" name="row[1][total]" id="row-total-1">
                                     <td>
-                                        <button type="button" class="btn btn-success btn-sm" onclick="addRow(1);"><i class="fas fa-plus"></i></button>
-                                        <button type="button" class="btn btn-danger btn-sm"  onclick="deleteRow(1);" disabled><i class="fas fa-minus"></i></button>
+                                        <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" title="Add row" onclick="addRow(1);"><i class="fas fa-plus"></i></button>
+                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete row" onclick="deleteRow(1);" disabled><i class="fas fa-minus"></i></button>
                                     </td>
                                 </tr>
                                 <tr hidden>
@@ -275,6 +272,37 @@
     </div>
 </div>
 
+<!-- Add Progress Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="add-progress-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="day-number"></h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="col-md-12" id="add-progress-form-container">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="project-id" value="">
+                                <input type="hidden" id="project-code" value="">
+                                <input type="hidden" id="boq-control-number" value="">
+                                <input type="hidden" id="day-num" value="">
+                                <input type="number" class="form-control" placeholder="Enter progress">
+                            </div>
+                            <div class="col-md-6 text-right p-1">
+                                <button type="button" class="btn btn-sm btn-primary" onclick="saveProgress();">Save</button> 
+                                <button type="button" class="btn btn-sm btn-warning"  data-dismiss="modal">Cancel</button> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function() {
         InitiateProjectsTable();
@@ -325,7 +353,7 @@
                             <input type="hidden" value="0" name="row['+ctr+'][total]" id="row-total-'+ctr+'">\
                             <td>\
                                 <button type="button" class="btn btn-success btn-sm" onclick="'+addRow+'"><i class="fas fa-plus"></i></button>\
-                                <button type="button" class="btn btn-danger btn-sm"  onclick="'+deleteRow+'"><i class="fas fa-minus"></i></button>\
+                                <button type="button" class="btn btn-danger btn-sm" onclick="'+deleteRow+'"><i class="fas fa-minus"></i></button>\
                             </td>\
                         </tr>';
         row.after(new_row);
@@ -387,10 +415,12 @@
     {
         $('#project-container').addClass('d-none')
         $('#view-daily-progress-container').removeClass('d-none');
-
         $('#view-daily-progress-container #site-name').empty().text(site_name);
 
         $.ajax({
+            beforeSend: function(){
+                $('.ajax-loader').css("visibility", "visible");
+            },
             url: "{{ url('get-all-project-details') }}",
             data: 
             {
@@ -399,23 +429,53 @@
             },
         })
         .done(function(result) {
-            console.log(result);
+            var table = $('#daily-progress-table');
+            table.empty();
+            var initalTable = '<thead>\
+                                <tr class="bg-dark text-white">\
+                                    <th>Activity/Scope Of Work</th>\
+                                </tr>\
+                                </thead>\
+                                <tbody></tbody>';
+            table.empty().append(initalTable);
+            table.empty().append('<thead>\
+                                    <tr class="bg-dark text-white">\
+                                        <th>Activity/Scope Of Work</th>\
+                                    </tr>\
+                                </thead>\
+                                <tbody></tbody>');
             var table_header = $('#daily-progress-table thead tr');
             var table_body = $('#daily-progress-table tbody');
+            // add days on header
             for (var i = 1; i < result['number_of_days']; i++) {
-                table_header.append('<th width="5%">Day '+i+'</th>');
+                table_header.append('<th class="text-center">Day '+i+'</th>');
             }
+
+            table_header.append('<th class="text-center">Total</th>');
             $.each(result['boq_details'], function(index, value) {
-                console.log(value)
+                var ctr_num = '<h4>'+value['controlnumber']+'</h4>';
+                var description = value['boq_description'];
+                // create blank TDs
+                var blank_tds = [];
+                for (var i = 1; i < result['number_of_days'] + 1; i++) {
+                    var addProgress = "addProgress("+result['id']+",'"+result['project_code']+"','"+value['controlnumber']+"',"+i+");";
+                    blank_tds+='<td ondblclick="'+addProgress+';" class="text-center"></th>';
+                }
+                table_body.append('<tr id="row-'+index+'"><td>'+ctr_num+'<br>'+description+'</td>'+blank_tds+'</tr>');
             });
-            $('#daily-progress-table').DataTable({
-                fixedColumns: {
-                    leftColumns: 2
-                },
-                scrollX:        true,
-                fixedColumns:   true,
-                paging: false,
+            table.DataTable({
+                "paging":   false,
+                "ordering": false,
+                "info":     false,
+                "bFilter": false,
+                "scrollX": true,
+                "scrollCollapse": true,
+                "fixedColumns": {
+                    leftColumns: 1,
+                    // rightColumns: 1
+                }
             });
+            $('.ajax-loader').css("visibility", "hidden");
         })
         .fail(function() {
             console.log("error");
@@ -424,7 +484,25 @@
 
     function viewProjectContainer()
     {
+        $('#daily-progress-table').DataTable().destroy();
+        $('#daily-progress-table').empty();
         $('#project-container').removeClass('d-none')
         $('#view-daily-progress-container').addClass('d-none');
     }
+
+    function addProgress(project_id, project_code, boq_control_number, day)
+    {
+        var modal = '#add-progress-modal';
+        $(modal).modal({ backdrop: 'static',keyboard: false });
+        $(modal+' #day-number').empty().text('Day '+day+' Progress');
+        $(modal+' #project-id').val(project_id);
+        $(modal+' #project-code').val(project_code);
+        $(modal+' #boq-control-number').val(boq_control_number);
+        $(modal+' #day-num').val(day);
+    }
+
+    // function saveProgress()
+    // {
+
+    // }
 </script>

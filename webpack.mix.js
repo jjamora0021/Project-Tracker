@@ -20,6 +20,7 @@ mix.js('resources/js/app.js', 'public/js')
 		, 'resources/js/jquery.easing.min'
 		, 'resources/js/jquery.dataTables.min.js'
 		, 'resources/js/dataTables.bootstrap4.min.js'
+		, 'resources/js/dataTables.fixedColumns.min.js'
 		, 'resources/js/sb-admin.min.js'
 		, 'resources/js/gijgo.min.js'
 	], 'public/js/app.js')
@@ -27,6 +28,7 @@ mix.js('resources/js/app.js', 'public/js')
    .styles([
 		'resources/sass/all.min.css'
 		, 'resources/sass/dataTables.bootstrap4.min.css'
+		, 'resources/sass/fixedColumns.bootstrap4.min.css'
 		, 'resources/sass/sb-admin.min.css'
 		, 'resources/sass/gijgo.min.css'
 	], 'public/css/all.css');
