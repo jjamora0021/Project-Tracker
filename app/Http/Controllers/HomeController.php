@@ -40,6 +40,6 @@ class HomeController extends Controller
         $locations = $this->LocationsController->getAllLocations();
         $projects = $this->ProjectsController->getAllProjects();
         
-        return view('home', compact('boqs','locations','projects','user_data'));
+        return view('home', compact('user_data'));
     }
 }

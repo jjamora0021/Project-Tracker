@@ -44,14 +44,21 @@ class ProjectsModel extends Model
     public function addProject($data)
     {
         $add_project = $this::insert([$data]);
-        return $add_project;
+        if($add_project)
+        {
+            return $add_project;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     // Get All Project Details
     public function getAllProjectDetails($id, $project_code)
     {
         $data = ($this::where('id',$id)->where('project_code',$project_code)->get())->toArray();
-
+        
         if(!empty($data))
         {
             return $data[0];

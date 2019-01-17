@@ -13,10 +13,10 @@
 
 Route::get('/', function () {
 	if(\Auth::check()){
-       return view('home');
+       return redirect('home');
     }
     else{
-        return view('auth/login');
+        return redirect('auth/login');
     }
 });
 
@@ -25,9 +25,25 @@ Auth::routes();
 Route::get('home', 'HomeController@index')->name('home');
 
 /**
+ * Dashboard
+ */
+
+// Load Dashboard Page
+Route::get('dashboard', 'DashboardController@index');
+
+/**
+ * Locations
+ */
+
+// Load Locations Page
+Route::get('locations', 'LocationsController@index');
+
+/**
  * BOQs
  */
 
+// Load BOQ Management Page
+Route::get('boq-management', 'BOQManagementController@index');
 // Get Details on a BOQ
 Route::get('get-boq-details', 'BOQManagementController@getBoqDetails');
 
@@ -35,7 +51,16 @@ Route::get('get-boq-details', 'BOQManagementController@getBoqDetails');
  * Projects
  */
 
+// Load Projects Page
+Route::get('projects', 'ProjectsController@index');
 // Add/Save New Project
 Route::post('add-project', 'ProjectsController@addProject');
 // Get All Details of a Project
 Route::get('get-all-project-details', 'ProjectsController@getAllProjectDetails');
+
+/**
+ * Daily Progress
+ */
+
+// Save Progress
+Route::get('save-daily-progress', 'DailyProgressController@saveDailyProgress');

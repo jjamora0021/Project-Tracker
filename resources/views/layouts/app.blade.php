@@ -73,7 +73,9 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            InitiateDatePicker();            
+            InitiateDatePicker();    
+            $('.alert').fadeOut(10000);
+            $('[data-toggle="tooltip"]').tooltip();         
         });
 
         function InitiateDatePicker()

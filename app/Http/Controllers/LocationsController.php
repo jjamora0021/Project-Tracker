@@ -29,6 +29,14 @@ class LocationsController extends Controller
         $this->LocationsModel = new \App\LocationsModel;
     }
 
+    // Load Locations Page
+    public function index()
+    {
+        $user_data = Session::get('user')[0];
+        $locations = $this->getAllLocations();
+        return view('tab-content.locations', compact('locations','user_data'));
+    }
+
     // Get All Locations
     public function getAllLocations()
     {

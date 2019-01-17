@@ -24,6 +24,7 @@ class CreateProjectsTable extends Migration
             $table->date('date_end');
             $table->string('boq_details');
             $table->integer('total_project_cost');
+            $table->integer('total_project_qty');
             $table->timestamps();
         });
     }

@@ -26,6 +26,13 @@ class BOQModel extends Model
     public function getBoqDetails($control_number)
     {
         $result = ($this::where('control_number',$control_number)->get())->toArray();
-        return $result[0];
+        if(!empty($result))
+        {
+            return $result[0];
+        }
+        else
+        {
+            return false;
+        }
     }
 }
