@@ -57,6 +57,8 @@ Route::get('projects', 'ProjectsController@index');
 Route::post('add-project', 'ProjectsController@addProject');
 // Get All Details of a Project
 Route::get('get-all-project-details', 'ProjectsController@getAllProjectDetails');
+// Edit Project Date(s)
+Route::get('edit-project-date', 'ProjectsController@editProjectDate');
 
 /**
  * Daily Progress

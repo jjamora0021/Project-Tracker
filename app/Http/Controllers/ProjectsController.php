@@ -61,6 +61,7 @@ class ProjectsController extends Controller
         return $data;
     }
 
+    // Fetch all Projects
     public function getAllProjects()
     {
     	$projects = $this->ProjectsModel->getAllProjects();
@@ -93,6 +94,7 @@ class ProjectsController extends Controller
         }
     }
 
+    // Add Project
     public function addProject(Request $request)
     {
         $boq_details = [];
@@ -130,6 +132,7 @@ class ProjectsController extends Controller
         }
     }
 
+    // Fetch all the Project Details
     public function getAllProjectDetails(Request $request)
     {
         $data = $this->ProjectsModel->getAllProjectDetails($request['id'],$request['project_code']);
@@ -181,6 +184,25 @@ class ProjectsController extends Controller
             }
 
             return response()->json($data);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    // Edit Project Date(s)
+    public function editProjectDate(Request $request)
+    {
+        $project_id = $request['project_id'];
+        $project_code = $request['project_code'];
+        $db_field = $request['db_field'];
+        $date_value = Carbon::parse($request['date_value']);
+
+        $update_date = $this->ProjectsModel->editProjectDate($project_id, $project_code, $db_field, $date_value);
+        if($update_date == true)
+        {
+            return response()->json($date_value->toDateString());
         }
         else
         {

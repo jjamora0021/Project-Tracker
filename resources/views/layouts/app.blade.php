@@ -80,11 +80,16 @@
 
         function InitiateDatePicker()
         {
+            var currentYear = (new Date()).getFullYear();
             $('#startDate').datepicker({
-                uiLibrary: 'bootstrap4'
+                uiLibrary: 'bootstrap4',
+                format: 'yyyy/mm/dd',
+                defaultViewDate: { year: currentYear }
             });
             $('#endDate').datepicker({
-                uiLibrary: 'bootstrap4'
+                uiLibrary: 'bootstrap4',
+                format: 'yyyy/mm/dd',
+                defaultViewDate: { year: currentYear }
             });
         }
     </script>

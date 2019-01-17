@@ -68,4 +68,22 @@ class ProjectsModel extends Model
             return false;
         }
     }
+
+    // Edit Project Date(s)
+    public function editProjectDate($project_id, $project_code, $db_field, $date_value)
+    {
+        $data = [
+            $db_field => $date_value
+        ];
+        
+        $result = $this::where('id', $project_id)->where('project_code', $project_code)->update($data);
+        if($result)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

@@ -45,6 +45,10 @@ body, html {
   cursor: pointer;
 }
 
+.clickable:hover {
+  cursor: pointer;
+}
+
 .form-control {
   font-size: 14px !important;
 }
@@ -254,6 +258,10 @@ table.dataTable.table-striped.DTFC_Cloned tbody tr:nth-of-type(even) {
   .DTFC_LeftBodyLiner {
     top: 1px !important;
   }
+}
+
+.DTFC_RightBodyWrapper {
+  top: -14px !important;
 }
 
 .ajax-loader {

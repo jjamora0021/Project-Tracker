@@ -34,7 +34,7 @@
     <div id="content-wrapper">
         <!-- Tab panes -->
         <div class="tab-content">
-            <div class="container text-center">
+            <div class="container text-center" id="alert-container">
                 @if(Session::has('success'))
                     <div class="alert alert-success text-center font-weight-bold">
                         {{ Session::get('success') }}
@@ -99,8 +99,8 @@
                                                     <td>{{ $value['location'] }}</td>
                                                     <td class="text-center">{{ $value['ccid'] }}</td>
                                                     <td class="text-center">{{ $value['work_order_number'] }}</td>
-                                                    <td class="text-center">{{ $value['date_start'] }}</td>
-                                                    <td class="text-center">{{ $value['date_end'] }}</td>
+                                                    <td id="date_start_{{ $value['project_code'] }}" class="text-center clickable" ondblclick="editDate('Start Date','{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['date_start'] }}','date_start')">{{ $value['date_start'] }}</td>
+                                                    <td id="date_end_{{ $value['project_code'] }}" class="text-center clickable" ondblclick="editDate('End Date','{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['date_end'] }}','date_end')">{{ $value['date_end'] }}</td>
                                                     <?php $total_progress = 0; ?>
                                                     @foreach($value['boq_details'] as $idx => $val)
                                                         @if($val['total_progress'] != 0)
@@ -157,6 +157,7 @@
                             <div class="ajax-loader">
                                 <img src="{{ url('images/Spinner-1.gif') }}" class="img-responsive" />
                             </div>
+                            <small><strong>Note: <span class="text-danger">Double click on the space below the day number to input updates.</span></strong></small>
                             <table class="table table-striped table-bordered" id="daily-progress-table" cellspacing="0" width="100%">
                             </table>
                         </div>
@@ -377,6 +378,37 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Edit Project Date -->
+                <div class="modal" tabindex="-1" role="dialog" id="edit-project-date-modal">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="edit-date-header"></h5>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="hidden" id="project-id" value="">
+                                                <input type="hidden" id="project-code" value="">
+                                                <input type="hidden" id="db-field" value="">
+                                                <input type="hidden" id="date-type" value="">
+                                                <input class="datepicker" data-date-format="mm/dd/yyyy" id="edit-date">
+                                            </div>
+                                            <div class="col-md-6 text-right p-1">
+                                                <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="updateProjectDate();">Update</button> 
+                                                <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -389,11 +421,13 @@
             })  
         });
 
+        // Initialize Datatable
         function InitiateProjectsTable()
         {
             $('#projects-table').DataTable();
         }
 
+        // Switch container views
         function toggleContainer(hide_container, show_container)
         {
             if($('#'+hide_container).hasClass('d-none'))
@@ -409,6 +443,7 @@
             
         }
 
+        // Add another BOQ row on Add Project View
         function addRow(ctr)
         {
             var row = $('#row-'+ctr);
@@ -440,12 +475,14 @@
             row.after(new_row);
         }
 
+        // Delete BOQ row on Add Project View
         function deleteRow(ctr)
         {
             var row = $('#row-'+ctr);
             row.remove();
         }
 
+        // Calculate Total Price
         function calculateTotalPrice(row_id, ctr)
         {
             var qty = parseInt($.trim($('#'+row_id+' #row-quantity-'+ctr).val()));
@@ -465,6 +502,7 @@
             $('#grand_total_cost').val(grand_total);
         }
 
+        // Populate BOQ Table with BOQs
         function showAllBOQ(ctr)
         {
             $('#boq-modal').modal();
@@ -472,6 +510,7 @@
             $('#boq-selection').DataTable();
         }
 
+        // Select BOQ to be added to project
         function selectBOQ(boq_control_number) 
         {
             var row_number = $('#boq-modal #row-number').val();
@@ -492,6 +531,7 @@
             });
         }
 
+        // Show Daily Progress View
         function viewDailyProgress(id, project_code, site_name, day_number)
         {
             $('#project-container').addClass('d-none')
@@ -545,7 +585,7 @@
                         var addProgress = "addProgress("+result['id']+",'"+result['project_code']+"','"+value['controlnumber']+"',"+i+");";
                         if(hasValue(value['progress'], i, value['progress'][i]) == true)
                         {
-                            blank_tds+='<td ondblclick="'+addProgress+'" id="td-'+i+'" class="text-center day-progress">'+value['progress'][i]+'</td>';
+                            blank_tds+='<td ondblclick="'+addProgress+'" id="td-'+i+'" class="text-center day-progress clickable">'+value['progress'][i]+'</td>';
                         }
                         else
                         {
@@ -554,7 +594,7 @@
                     }
                     table_body.append('<tr id="'+value['controlnumber']+'"><td>'+ctr_num+'<br>'+description+'</td>'+blank_tds+'</tr>');
                     
-                    $('#daily-progress-table tbody tr#'+value['controlnumber']+' td:last-child').empty().text(value['boq_total_progress']);
+                    $('#daily-progress-table tbody tr#'+value['controlnumber']+' td:last-child').removeAttr('ondblclick').removeClass('clickable').empty().text(value['boq_total_progress']);
                     // console.log(value);
                 });
                 table.DataTable({
@@ -566,7 +606,7 @@
                     "scrollCollapse": true,
                     "fixedColumns": {
                         leftColumns: 1,
-                        // rightColumns: 1
+                        rightColumns: 1
                     }
                 });
                 $('.ajax-loader').css("visibility", "hidden");
@@ -577,10 +617,12 @@
             });
         }
 
+        // Check if object has a value
         function hasValue(obj, key, value) {
             return obj.hasOwnProperty(key) && obj[key] === value;
         }
 
+        // View Projects Main Page
         function viewProjectContainer()
         {
             $('#daily-progress-table').DataTable().destroy();
@@ -589,6 +631,7 @@
             $('#view-daily-progress-container').addClass('d-none');
         }
 
+        // View Add Progress Modal
         function addProgress(project_id, project_code, boq_control_number, day)
         {
             var modal = '#add-progress-modal';
@@ -600,6 +643,7 @@
             $(modal+' #day-num').val(day);
         }
 
+        // Add Progress to BOQ by day
         function saveProgress()
         {
             var modal = '#add-progress-modal';
@@ -654,6 +698,64 @@
                 {
                     $('#view-daily-progress-container .alert-danger').removeClass('d-none');
                     $('.alert').fadeOut(10000);
+                }
+            })
+            .fail(function() {
+                console.log("error");
+            });
+        }
+
+        // Edit Date(s)
+        function editDate(date_type, project_id, project_code, current_date_value, db_field)
+        {
+            var modal_id = '#edit-project-date-modal';
+            var currentYear = (new Date()).getFullYear();
+            $('#edit-date').datepicker({
+                uiLibrary: 'bootstrap4',
+                format: 'yyyy/mm/dd/',
+                updateViewDate: true,
+                changeYear: true,
+                defaultViewDate: { year: currentYear }
+            });
+            $(modal_id).modal({ "backdrop":"static","keyboard":false });
+            $(modal_id+' #edit-date-header').empty().text('Edit '+ date_type);
+            $(modal_id+' #project-id').val(project_id);
+            $(modal_id+' #project-code').val(project_code);
+            $(modal_id+' #db-field').val(db_field);
+            $(modal_id+' #date-type').val(date_type);
+            $(modal_id+' #edit-date').val(current_date_value);
+        }
+
+        // Save updated Project Date(s)
+        function updateProjectDate()
+        {
+            var modal_id = '#edit-project-date-modal';
+            var project_id = $(modal_id+' #project-id').val();
+            var project_code = $(modal_id+' #project-code').val();
+            var db_field = $(modal_id+' #db-field').val();
+            var date_value = $(modal_id+' #edit-date').val();
+            var date_type = $(modal_id+' #date-type').val();
+
+            $.ajax({
+                url: "{{ url('edit-project-date') }}",
+                data: {
+                    "project_id" : project_id,
+                    "project_code" : project_code,
+                    "db_field" : db_field,
+                    "date_value" : date_value
+                },
+            })
+            .done(function(response) {
+                if(response != false)
+                {
+                    $('#alert-container .alert-success').empty().text('Date has been successfully modified!');
+                    $('.alert').fadeOut(10000);
+                    var ondbclick = "editDate('"+date_type+"','"+project_id+"','"+project_code+"','"+response+"','"+db_field+"');"
+                    $('td#'+db_field+'_'+project_code).attr('ondblclick',ondbclick).empty().text(response);
+                }
+                else
+                {
+                    alert('Something went wrong. Please try again.')
                 }
             })
             .fail(function() {
