@@ -29,4 +29,35 @@ class LocationsModel extends Model
         $locations = ($this::select('id','location','abbrv')->get())->toArray();
         return $locations;
     }
+
+    // Save New Location
+    public function saveLocation($code, $location)
+    {
+        $check = ($this::where('location',$location)->orWhere('abbrv',$code)->get())->toArray();
+        if(!empty($check))
+        {
+            return false;
+        }
+        else
+        {
+            $data = [
+                'abbrv' => $code,
+                'location' => $location,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ];
+
+            $add = $this::insert([$data]);
+
+            if($add)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+    }
 }

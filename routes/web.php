@@ -16,12 +16,12 @@ Route::get('/', function () {
        return redirect('home');
     }
     else{
-        return redirect('auth/login');
+        return redirect('login');
     }
 });
 
 Auth::routes();
-
+// Check what type of user and redirects accordingly
 Route::get('home', 'HomeController@index')->name('home');
 
 /**
@@ -37,6 +37,9 @@ Route::get('dashboard', 'DashboardController@index');
 
 // Load Locations Page
 Route::get('locations', 'LocationsController@index');
+
+// Add New Location
+Route::get('save-location', 'LocationsController@saveLocation');
 
 /**
  * BOQs
@@ -66,3 +69,10 @@ Route::get('edit-project-date', 'ProjectsController@editProjectDate');
 
 // Save Progress
 Route::get('save-daily-progress', 'DailyProgressController@saveDailyProgress');
+
+/**
+ * BOM Management
+ */
+
+// Load BOM Management Page
+Route::get('bom-management', 'BOMManagementController@index');

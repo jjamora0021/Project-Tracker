@@ -34,7 +34,8 @@
     <div id="content-wrapper">
         <div class="tab-content">
             <div class="container text-center">
-                <h1>Logo</h1>
+                <img src="{{ url('images/logo/logo.png') }}" alt="">
+            </div>
         </div>
     </div>
 @endsection

@@ -10,6 +10,7 @@ use App\LocationsModel;
 use Carbon\Carbon;
 use DB;
 use Config;
+use Session;
 
 class BOQManagementController extends Controller
 {
@@ -26,7 +27,16 @@ class BOQManagementController extends Controller
         $this->BOQModel = new \App\BOQModel;
     }
 
-    // Loads Locations Page
+    // Load BOQ Page
+    public function index()
+    {
+        $user_data = Session::get('user')[0];
+        $boqs = $this->getBOQs();
+
+        return view('tab-content.boq-management', compact('boqs','user_data'));
+    }
+
+    // Fetch all BOQs
     public function getBOQs()
     {
         $boqs = $this->BOQModel->getBOQs();

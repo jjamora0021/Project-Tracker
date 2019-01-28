@@ -43,4 +43,21 @@ class LocationsController extends Controller
         $locations = $this->LocationsModel->getAllLocations();
         return $locations;
     }
+
+    // Save New Location
+    public function saveLocation(Request $request)
+    {
+        $code = $request['code'];
+        $location = $request['location'];
+
+        $add = $this->LocationsModel->saveLocation($code, $location);
+        if($add == true)
+        {
+            return 'true';
+        }
+        else
+        {
+            return 'false';
+        }
+    }
 }

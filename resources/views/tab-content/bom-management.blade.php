@@ -29,7 +29,7 @@
             <div class="container-fluid">
                 <div class="col-md-12 page-header-container mb-2">
                     <div class="col-md-6 p-0">
-                        <h2>BOQ Management</h2>
+                        <h2>BOM Management</h2>
                     </div>
                     <!-- <div class="col-md-6 pt-2 text-right">
                         <button class="btn btn-primary btn-sm float-right ml-2 font-12 font-weight-bold" data-toggle="modal" data-target="#add-location-modal">
@@ -38,11 +38,11 @@
                     </div> -->
                 </div>
 
-                <!-- BOQ Table -->
+                <!-- BOM Table -->
                 <div class="card mb-2">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-bordered" cellspacing="0" id="boq-table" style="width:100%">
+                            <table class="table table-bordered" cellspacing="0" id="bom-table" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th hidden>ID</th>
@@ -82,16 +82,15 @@
 </div>
 
 <script type="text/javascript">
-    $('.sidebar #boq').addClass('active');
-    $('.sidebar #boq a').addClass('active');
-        
     $(document).ready(function() {
-        InitiateBOQTable();
+        InitiateBOMTable();
+        $('.sidebar #bom').addClass('active');
+        $('.sidebar #bom a').addClass('active');
     });
 
     function InitiateBOQTable()
     {
-        $('#boq-table').DataTable({
+        $('#bom-table').DataTable({
             "order": []
         });
     }

@@ -20,11 +20,12 @@
     <link href="{{ asset('css/sb-admin.min.css') }}" rel="stylesheet">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="icon" type="image/png" href="{{ url('images/logo/favicon.png') }}">
 </head>
 <body id="page-top">
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top" id="top-navbar">
         <a class="navbar-brand" href="{{ url('/') }}">
+            <img src="{{ url('images/logo/header-logo.png') }}" width="80px">
             Project Tracker
         </a>
 

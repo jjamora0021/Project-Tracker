@@ -11,6 +11,8 @@ class BoqTableSeeder extends Seeder
      */
     public function run()
     {
+    	DB::table('boq')->truncate();
+
         DB::table('boq')->insert( [
 		'control_number'=>1,
 		'description'=>'AERIAL CABLE RELATED OSP INSTALLATIONS',
