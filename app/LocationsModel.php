@@ -58,6 +58,32 @@ class LocationsModel extends Model
                 return false;
             }
         }
-        
+    }
+
+    // Update Location
+    public function updateLocation($code, $data)
+    {
+        $update = $this::where('abbrv',$code)->update($data);
+        if($update)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public function deleteLocation($code, $location)
+    {
+        $delete = $this::where('abbrv',$code)->where('location',$location)->delete();
+        if($delete)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

@@ -53,7 +53,7 @@ class HomeController extends Controller
         
         if($user = Auth::user())
         {
-            $this->LogsModel->createLog($user_data, $now);
+            $this->LogsModel->createLoginLog($user_data, $now);
 
             if($user_data['user_role'] == 'admin')
             {

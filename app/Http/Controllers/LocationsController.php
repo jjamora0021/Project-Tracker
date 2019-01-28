@@ -27,6 +27,8 @@ class LocationsController extends Controller
     {
         $this->middleware('auth');
         $this->LocationsModel = new \App\LocationsModel;
+
+        $this->LogsModel = new \App\LogsModel;
     }
 
     // Load Locations Page
@@ -47,16 +49,102 @@ class LocationsController extends Controller
     // Save New Location
     public function saveLocation(Request $request)
     {
+        $user_data = Session::get('user')[0];
+        $now = Carbon::now();
+
         $code = $request['code'];
         $location = $request['location'];
 
         $add = $this->LocationsModel->saveLocation($code, $location);
+        $details = [
+            'user' => $user_data['username'],
+            'timestamp' => $now,
+            'location_code' => $code,
+            'result' => 'null'
+        ];
+
         if($add == true)
         {
+            $details['result'] = 'success';
+            $this->LogsModel->createLocationLog($user_data, $now, $details);
             return 'true';
         }
         else
         {
+            $details['result'] = 'failed';
+            $this->LogsModel->createLocationLog($user_data, $now, $details);
+            return 'false';
+        }
+    }
+
+    // Update Location
+    public function updateLocation(Request $request)
+    {
+        $user_data = Session::get('user')[0];
+        $now = Carbon::now();
+
+        $code = $request['code'];
+        $location = $request['location'];
+
+        $data = [
+            'abbrv' => $request['input_code'],
+            'location' => $request['input_location'],
+            'updated_at' => $now
+        ];
+
+        $update = $this->LocationsModel->updateLocation($code, $data);
+        $details = [
+            'user' => $user_data['username'],
+            'timestamp' => $now,
+            'orginial_location_code' => $code,
+            'orginial_location' => $location,
+            'current_location_code' => $request['input_code'],
+            'current_location' => $request['input_location'],
+            'result' => 'null'
+        ];
+
+        if($update == true)
+        {
+            $details['result'] = 'success';
+            $this->LogsModel->createUpdateLocationLog($user_data, $now, $details);
+            return 'true';
+        }
+        else
+        {
+            $details['result'] = 'failed';
+            $this->LogsModel->createUpdateLocationLog($user_data, $now, $details);
+            return 'false';
+        }
+    }
+
+    //Delete Location
+    public function deleteLocation(Request $request)
+    {
+        $user_data = Session::get('user')[0];
+        $now = Carbon::now();
+
+        $code = $request['code'];
+        $location = $request['location'];
+
+        $delete = $this->LocationsModel->deleteLocation($code, $location);
+        $details = [
+            'user' => $user_data['username'],
+            'timestamp' => $now,
+            'location_code' => $code,
+            'location' => $location,
+            'result' => 'null'
+        ];
+
+        if($update == true)
+        {
+            $details['result'] = 'success';
+            $this->LogsModel->createDeleteLocationLog($user_data, $now, $details);
+            return 'true';
+        }
+        else
+        {
+            $details['result'] = 'failed';
+            $this->LogsModel->createDeleteLocationLog($user_data, $now, $details);
             return 'false';
         }
     }

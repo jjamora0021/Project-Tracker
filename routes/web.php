@@ -37,9 +37,14 @@ Route::get('dashboard', 'DashboardController@index');
 
 // Load Locations Page
 Route::get('locations', 'LocationsController@index');
-
+// Fetch All Locations
+Route::get('get-all-locations', 'LocationsController@getAllLocations');
 // Add New Location
 Route::get('save-location', 'LocationsController@saveLocation');
+// Update Location
+Route::get('update-location', 'LocationsController@updateLocation');
+// Delete Location
+Route::get('delete-location', 'LocationsController@deleteLocation');
 
 /**
  * BOQs
