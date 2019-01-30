@@ -695,11 +695,8 @@
         
         var progress = [];
         for (var i = 1; i < total_days; i++) {
-            if(parseInt($('tr#'+boq_control_number+' #td-'+i+'.day-progress').text()) != 0)
-            {
-                progress.push(parseInt($('tr#'+boq_control_number+' #td-'+i+'.day-progress').text()));
-                total += parseInt($('tr#'+boq_control_number+' #td-'+i+'.day-progress').text());
-            }
+            progress.push(parseInt($('tr#'+boq_control_number+' #td-'+i+'.day-progress').text()));
+            total += parseInt($('tr#'+boq_control_number+' #td-'+i+'.day-progress').text());
         }
 
         $('tr#'+boq_control_number+' td:last-child').text(total);
@@ -726,7 +723,7 @@
             if(response == 'true')
             {
                 $('#view-daily-progress-container .alert-success').removeClass('d-none');
-                window.location.replace("{{ url('projects') }}");
+                // window.location.replace("{{ url('projects') }}");
                 setTimeout(function() {
                     $('.alert').addClass('d-none')
                 }, 10000);
