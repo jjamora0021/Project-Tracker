@@ -11,6 +11,7 @@ use App\User;
 
 use Session;
 use DB;
+use Carbon\Carbon;
 
 class RegisterController extends Controller
 {
