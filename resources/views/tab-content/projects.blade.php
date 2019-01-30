@@ -83,7 +83,7 @@
                                                     @endif
                                                 @endforeach
                                                 <?php $total_progress = ($total_progress / $value['total_project_qty']) * 100; ?>
-                                                <td class="text-center">{{ $total_progress }}%</td>
+                                                <td class="text-center">{{ (int)$total_progress }}%</td>
                                                 <td class="text-center">
                                                     <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['site_name'] }} Progress" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}','{{ $days }}');"><i class="fas fa-edit"></i></button>
                                                     <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['site_name'] }}" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}');"><i class="fas fa-trash-alt"></i></button>
@@ -121,10 +121,12 @@
                             <div class="col-md-6 p-0">
                                 <h4 class="mb-3"><i class="fas fa-tasks"></i> Daily Progress</h4>
                             </div>
-                            <div class="col-md-6 pt-2 text-right pr-0">
-                                <button class="btn btn-primary btn-sm float-right ml-2 font-12 font-weight-bold">
-                                    <i class="fas fa-plus"></i> Add Scope of Work
-                                </button>
+                            <div class="col-md-6 pt-2 text-right pr-0" id="add-scope-of-work-btn-container">
+                                <a href="">
+                                    <button class="btn btn-primary btn-sm float-right ml-2 font-12 font-weight-bold">
+                                        <i class="fas fa-plus"></i> Add Scope of Work
+                                    </button>
+                                </a>
                             </div>
                         </div>
                         <div class="ajax-loader">
@@ -165,7 +167,7 @@
                                 <!-- Location -->
                                 <div class="form-group col-md-2">
                                     <label>Location: </label>
-                                    <select class="custom-select" id="project-location" name="location" required>
+                                    <select class="custom-select form-control" id="project-location" name="location" required>
                                         <option selected>Select Location</option>
                                         @foreach($locations as $key => $loc)
                                             <option value="{{ $loc['abbrv'] }}">{{ $loc['location'] }}</option>
@@ -253,7 +255,7 @@
                                                     <input type="text" class="form-control text-center" name="row[1][price]" id="row-price-1" value="0" required onkeyup="calculateTotalPrice('row-1',1);">
                                                 </td>
                                                 <td class="text-center" id="td-row-total-1">0</td>
-                                                <input type="hidden" value="0" name="row[1][total]" id="row-total-1">
+                                                <input class="total-price" type="hidden" value="0" name="row[1][total]" id="row-total-1">
                                                 <td>
                                                     <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" title="Add row" onclick="addRow(1);"><i class="fas fa-plus"></i></button>
                                                     <button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete row" onclick="deleteRow(1);" disabled><i class="fas fa-minus"></i></button>
@@ -262,13 +264,13 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <h5 class="text-right">Grand Total: <span id="grand-total"></span></h5>
+                                <h5 class="text-right" onclick="showGrandTotal();"><small class="text-right text-danger">Click to show grand total</small><br>Grand Total: <span id="grand-total" style="text-decoration: underline; text-decoration-style: double;"></span></h5>
                                 <input type="hidden" id="grand_total_cost" name="grand_total_cost" value="">
                             </div>
 
                             <div class="row mt-5 mb-3">
                                 <div class="form-group col-md-12">
-                                    <button type="submit" class="btn btn-sm btn-primary float-right">Submit</button>
+                                    <button id="create-project-add-btn" type="submit" class="btn btn-sm btn-primary float-right" disabled>Submit</button>
                                 </div>
                             </div>
                         </form>
@@ -352,6 +354,44 @@
                 </div>
             </div>
 
+            <!-- Update Progress Modal -->
+            <div class="modal" tabindex="-1" role="dialog" id="update-progress-modal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="day-number"></h5>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="col-md-12" id="update-progress-form-container">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <input type="hidden" id="project-id" value="">
+                                            <input type="hidden" id="project-code" value="">
+                                            <input type="hidden" id="boq-control-number" value="">
+                                            <input type="hidden" id="day-num" value="">
+                                            <div class="form-group col-md-4 p-0">
+                                                <label for="usr">Current Progress:</label>
+                                                <input type="number" tabindex="1" id="progress" value="" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="comment">Comment:</label>
+                                                <textarea class="form-control" rows="3" id="comment"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 text-right pr-3">
+                                            <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="requestForUpdateProgress();">Update</button> 
+                                            <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Edit Project Date -->
             <div class="modal" tabindex="-1" role="dialog" id="edit-project-date-modal">
                 <div class="modal-dialog" role="document">
@@ -416,7 +456,6 @@
             $('#'+hide_container).addClass('d-none');
             $('#'+show_container).removeClass('d-none');
         }
-        
     }
 
     // Add another BOQ row on Add Project View
@@ -442,7 +481,7 @@
                                 <input type="text" class="form-control text-center" name="row['+ctr+'][price]" id="row-price-'+ctr+'" value="0" required onkeyup="'+onBlur+'">\
                             </td>\
                             <td class="text-center" id="td-row-total-'+ctr+'">0</td>\
-                            <input type="hidden" value="0" name="row['+ctr+'][total]" id="row-total-'+ctr+'">\
+                            <input type="hidden" class="total-price" value="0" name="row['+ctr+'][total]" id="row-total-'+ctr+'">\
                             <td>\
                                 <button type="button" class="btn btn-success btn-sm" onclick="'+addRow+'"><i class="fas fa-plus"></i></button>\
                                 <button type="button" class="btn btn-danger btn-sm" onclick="'+deleteRow+'"><i class="fas fa-minus"></i></button>\
@@ -467,15 +506,19 @@
 
         $('#row-total-'+ctr).val(row_total_price);
         $('#td-row-total-'+ctr).empty().text(row_total_price.toLocaleString());
+    }
 
-        var tr_count = $('#scope-of-work-section table tbody tr:last').index();
+    // Calculate Grand Total Price
+    function showGrandTotal()
+    {
         var grand_total = 0;
-        for (var i = 1; i <= tr_count; i++) {
-            grand_total += parseInt($.trim($('#row-total-'+i).val())) || 0;
-        }
-
+        $.each($('.total-price'), function(index, el) {
+            grand_total += parseInt(el.value);
+        });
         $('#grand-total').empty().text(grand_total.toLocaleString());
         $('#grand_total_cost').val(grand_total);
+
+        $('#create-project-add-btn').removeAttr('disabled');
     }
 
     // Populate BOQ Table with BOQs
@@ -527,7 +570,7 @@
             },
         })
         .done(function(result) {
-            console.log(result);
+            $('#view-daily-progress-container #add-scope-of-work-btn-container a').attr('href',"{{ url('add-scope-of-work') }}/"+id+"/"+project_code);
             var table = $('#daily-progress-table');
             table.empty();
             var initalTable = '<thead>\
@@ -546,8 +589,8 @@
             var table_header = $('#daily-progress-table thead tr');
             var table_body = $('#daily-progress-table tbody');
             // add days on header
-            for (var i = 1; i < result['number_of_days']; i++) {
-                table_header.append('<th class="text-center">Day '+i+'</th>');
+            for (var i = 1; i < result['number_of_days'] + 1; i++) {
+                table_header.append('<th class="text-center">Day '+i+' ('+result['date_range'][i - 1]+')</th>');
             }
 
             table_header.append('<th class="text-center">Total</th>');
@@ -558,11 +601,12 @@
                 // create blank TDs
                 var blank_tds = [];
                 var total_prog = 0;
-                for (var i = 1; i < result['number_of_days'] + 1; i++) {
+                for (var i = 1; i < result['number_of_days'] + 2; i++) {
                     var addProgress = "addProgress("+result['id']+",'"+result['project_code']+"','"+value['controlnumber']+"',"+i+");";
+                    var updateProgress = "updateProgress("+result['id']+",'"+result['project_code']+"','"+value['controlnumber']+"',"+i+","+value['progress'][i]+");";
                     if(hasValue(value['progress'], i, value['progress'][i]) == true)
                     {
-                        blank_tds+='<td ondblclick="'+addProgress+'" id="td-'+i+'" class="text-center day-progress clickable">'+value['progress'][i]+'</td>';
+                        blank_tds+='<td ondblclick="'+updateProgress+'" id="td-'+i+'" class="text-center day-progress clickable">'+value['progress'][i]+'</td>';
                     }
                     else
                     {
@@ -620,6 +664,18 @@
         $(modal+' #day-num').val(day);
     }
 
+    function updateProgress(project_id, project_code, boq_control_number, day, current_value)
+    {
+        var modal = '#update-progress-modal';
+        $(modal).modal({ backdrop: 'static',keyboard: false });
+        $(modal+' #day-number').empty().text('Update Day '+day+' Progress');
+        $(modal+' #project-id').val(project_id);
+        $(modal+' #project-code').val(project_code);
+        $(modal+' #boq-control-number').val(boq_control_number);
+        $(modal+' #day-num').val(day);
+        $(modal+' #progress').val(parseInt(current_value));
+    }
+
     // Add Progress to BOQ by day
     function saveProgress()
     {
@@ -661,6 +717,7 @@
                 "boq_control_number" : boq_control_number,
                 "day_number" : day_number,
                 "progress" : progress,
+                "progress_input" : progress_input,
                 "total_progress" : total,
                 // "total_project_progress" : total_project_progress
             },
@@ -669,12 +726,17 @@
             if(response == 'true')
             {
                 $('#view-daily-progress-container .alert-success').removeClass('d-none');
-                $('.alert').fadeOut(10000);
+                window.location.replace("{{ url('projects') }}");
+                setTimeout(function() {
+                    $('.alert').addClass('d-none')
+                }, 10000);
             }
             else
             {
                 $('#view-daily-progress-container .alert-danger').removeClass('d-none');
-                $('.alert').fadeOut(10000);
+                setTimeout(function() {
+                    $('.alert').addClass('d-none')
+                }, 10000);
             }
         })
         .fail(function() {
@@ -726,13 +788,72 @@
             if(response != false)
             {
                 $('#alert-container .alert-success').empty().text('Date has been successfully modified!');
-                $('.alert').fadeOut(10000);
+                setTimeout(function() {
+                    $('.alert').addClass('d-none')
+                }, 10000);
                 var ondbclick = "editDate('"+date_type+"','"+project_id+"','"+project_code+"','"+response+"','"+db_field+"');"
                 $('td#'+db_field+'_'+project_code).attr('ondblclick',ondbclick).empty().text(response);
             }
             else
             {
                 alert('Something went wrong. Please try again.')
+            }
+        })
+        .fail(function() {
+            console.log("error");
+        });
+    }
+
+    // Request to admin for Update of Daily Progress
+    function requestForUpdateProgress()
+    {
+        var modal = '#update-progress-form-container';
+
+        var project_id = $(modal+' #project-id').val();
+        var project_code = $(modal+' #project-code').val();
+        var boq_control_number = $(modal+' #boq-control-number').val();
+        var day_number = $(modal+' #day-num').val();
+        var current_progress = parseInt($(modal+' #progress').val());
+        var comment = $(modal+ ' #comment').val();
+
+        var total = 0;
+        var total_days = $('tr#'+boq_control_number+' td').length - 2;
+        
+        var progress = [];
+        for (var i = 1; i < total_days; i++) {
+            if(parseInt($('tr#'+boq_control_number+' #td-'+i+'.day-progress').text()) != 0)
+            {
+                progress.push(parseInt($('tr#'+boq_control_number+' #td-'+i+'.day-progress').text()));
+                total += parseInt($('tr#'+boq_control_number+' #td-'+i+'.day-progress').text());
+            }
+        }
+        
+        $.ajax({
+            url: "{{ url('request-to-update-progress') }}",
+            data: {
+                "project_id" : project_id,
+                "project_code" : project_code,
+                "boq_control_number" : boq_control_number,
+                "day_number" : day_number,
+                "current_progress" : current_progress,
+                "progress" : progress,
+                "comment" : comment
+            },
+        })
+        .done(function(response) {
+            if(response == 'true')
+            {
+                $('.alert-success').empty().text('Request to update progress successfully submitted for ADMIN approval.').removeClass('d-none');
+                setTimeout(function() {
+                    $('.alert-success').addClass('d-none')
+                }, 10000);
+            }
+            else
+            {
+                $('.alert-danger').empty().text('Something went wrong. Please try again!').removeClass('d-none');
+                setTimeout(function() {
+                    $('.alert-danger').addClass('d-none')
+                }, 10000);
             }
         })
         .fail(function() {

@@ -7,6 +7,12 @@
                 <span>Dashboard</span>
             </a>
         </li>
+        <li class="nav-item" id="logs">
+            <a class="nav-link" href="{{ url('logs') }}">
+                <i class="fas fa-history"></i>
+                <span>Logs</span>
+            </a>
+        </li>
     @endif
    <li class="nav-item" id="locations">
         <a class="nav-link" href="{{ url('locations') }}">

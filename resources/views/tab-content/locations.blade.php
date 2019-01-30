@@ -91,6 +91,7 @@
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">Update Location Details</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
             <!-- Modal body -->
@@ -130,10 +131,14 @@
             },
         })
         .done(function(response) {
+            $('#add-location-modal #location-code').val('');
+            $('#add-location-modal #location').val('');
             if(response == 'true')
             {
                 $('.alert-success').empty().text('Location successfully added!').removeClass('d-none');
-                $('.alert').fadeOut(10000).done(function() { $('.alert-success').addClass('d-none') });
+                setTimeout(function() {
+                    $('.alert-success').addClass('d-none')
+                }, 10000);
                 var locations = '<div class="col-md-4">\
                                     <a href="#">\
                                         <button class="btn btn-xl btn-black col-md-12 mb-3 location-tile text-uppercase">'+location+'</button>\
@@ -144,7 +149,9 @@
             else
             {
                 $('.alert-danger').empty().text('Something went wrong. Please try again!').removeClass('d-none');
-                $('.alert').fadeOut(10000).done(function() { $('.alert-danger').addClass('d-none') });
+                setTimeout(function() {
+                    $('.alert-danger').addClass('d-none')
+                }, 10000);
             }
         })
         .fail(function() {
@@ -202,13 +209,17 @@
             if(response == 'true')
             {
                 $('.alert-success').empty().text('Location successfully updated!').removeClass('d-none');
-                $('.alert').fadeOut(10000).done(function() { $('.alert-success').addClass('d-none') });
+                setTimeout(function() {
+                    $('.alert-success').addClass('d-none')
+                }, 10000);
                 $('#'+code).empty().append(input_location).attr('id',input_code);
             }
             else
             {
                 $('.alert-danger').empty().text('Something went wrong. Please try again!').removeClass('d-none');
-                $('.alert').fadeOut(10000).done(function() { $('.alert-danger').addClass('d-none') });
+                setTimeout(function() {
+                    $('.alert-danger').addClass('d-none')
+                }, 10000);
             }
         })
         .fail(function() {
@@ -226,12 +237,25 @@
             },
         })
         .done(function(response) {
-            console.log("success");
+            if(response == 'true')
+            {
+                $('.alert-success').empty().text('Location successfully deleted!').removeClass('d-none');
+                setTimeout(function() {
+                    $('.alert-success').addClass('d-none')
+                }, 10000);
+                $('#'+code).parent().parent().remove();
+            }
+            else
+            {
+                $('.alert-danger').empty().text('Something went wrong. Please try again!').removeClass('d-none');
+                setTimeout(function() {
+                    $('.alert-danger').addClass('d-none')
+                }, 10000);
+            }
         })
         .fail(function() {
             console.log("error");
         });
-        
     }
 </script>
 

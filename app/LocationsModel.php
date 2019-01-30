@@ -74,6 +74,7 @@ class LocationsModel extends Model
         }
     }
 
+    // Delete Location
     public function deleteLocation($code, $location)
     {
         $delete = $this::where('abbrv',$code)->where('location',$location)->delete();
@@ -85,5 +86,12 @@ class LocationsModel extends Model
         {
             return false;
         }
+    }
+
+    // Get Location Details
+    public function getLocationDetails($code)
+    {
+        $result = ($this::where('abbrv',$code)->get())[0]->toArray();
+        return $result;
     }
 }

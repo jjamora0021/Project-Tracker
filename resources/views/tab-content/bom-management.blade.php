@@ -46,7 +46,7 @@
                                 <thead>
                                     <tr>
                                         <th hidden>ID</th>
-                                        <th width="10%" id="control-number">Control Number</th>
+                                        <th width="10%" id="control-number">Material Code</th>
                                         <th width="60%" id="description">Description</th>
                                         <th width="10%" class="text-center" id="unit">Unit</th>
                                         @if($user_data['user_role'] == 'admin')
@@ -55,17 +55,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if(!empty($boqs))
-                                        @foreach($boqs as $key => $value)
+                                    @if(!empty($boms))
+                                        @foreach($boms as $key => $value)
                                             <tr>
                                                 <td hidden="">{{ $value['id'] }}</td>
-                                                <td>{{ $value['control_number'] }}</td>
+                                                <td>{{ $value['material_code'] }}</td>
                                                 <td>{{ $value['description'] }}</td>
                                                 <td class="text-center text-uppercase">{{ $value['unit'] }}</td>
                                                 @if($user_data['user_role'] == 'admin')
                                                     <td class="text-center">
-                                                        <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['control_number'] }}"><i class="fas fa-edit"></i></button>
-                                                        <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['control_number'] }}"><i class="far fa-trash-alt"></i></button>
+                                                        <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['material_code'] }}"><i class="fas fa-edit"></i></button>
+                                                        <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['material_code'] }}"><i class="far fa-trash-alt"></i></button>
                                                     </td>
                                                 @endif
                                             </tr>
@@ -88,7 +88,7 @@
         $('.sidebar #bom a').addClass('active');
     });
 
-    function InitiateBOQTable()
+    function InitiateBOMTable ()
     {
         $('#bom-table').DataTable({
             "order": []

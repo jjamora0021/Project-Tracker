@@ -54,6 +54,8 @@ Route::get('delete-location', 'LocationsController@deleteLocation');
 Route::get('boq-management', 'BOQManagementController@index');
 // Get Details on a BOQ
 Route::get('get-boq-details', 'BOQManagementController@getBoqDetails');
+// Get All BOQs
+Route::get('get-all-boqs', 'BOQManagementController@getAllBOQs');
 
 /**
  * Projects
@@ -67,6 +69,8 @@ Route::post('add-project', 'ProjectsController@addProject');
 Route::get('get-all-project-details', 'ProjectsController@getAllProjectDetails');
 // Edit Project Date(s)
 Route::get('edit-project-date', 'ProjectsController@editProjectDate');
+// Add Scope of Work to project
+Route::get('add-scope-of-work/{project_id}/{project_code}', 'ProjectsController@addScopeOfWork');
 
 /**
  * Daily Progress
@@ -74,6 +78,10 @@ Route::get('edit-project-date', 'ProjectsController@editProjectDate');
 
 // Save Progress
 Route::get('save-daily-progress', 'DailyProgressController@saveDailyProgress');
+//Request to Update Progress
+Route::get('request-to-update-progress', 'DailyProgressController@requestToUpdateProgress');
+// Approve Request to Update Progress
+Route::get('approve-to-update-progress', 'DailyProgressController@approveRequestToUpdateProgress');
 
 /**
  * BOM Management

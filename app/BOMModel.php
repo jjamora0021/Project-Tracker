@@ -19,6 +19,6 @@ class BOMModel extends Model
     public function getBOMs()
     {
     	$result = ($this::all())->toArray();
-    	dd($result);
+    	return $result;
     }
 }

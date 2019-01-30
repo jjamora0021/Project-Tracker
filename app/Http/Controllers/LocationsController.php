@@ -135,7 +135,7 @@ class LocationsController extends Controller
             'result' => 'null'
         ];
 
-        if($update == true)
+        if($delete == true)
         {
             $details['result'] = 'success';
             $this->LogsModel->createDeleteLocationLog($user_data, $now, $details);

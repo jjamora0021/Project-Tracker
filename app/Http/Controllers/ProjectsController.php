@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\ProjectsModel;
 use App\BOQModel;
 use App\DailyProgressModel;
+use \App\LogsModel;
+use App\LocationsModel;
 
 use App\Http\Controllers\LocationsController;
 use App\Http\Controllers\BOQManagementController;
@@ -20,6 +22,7 @@ class ProjectsController extends Controller
 	protected $ProjectsModel;
     protected $BOQModel;
     protected $DailyProgressModel;
+    protected $LogsModel;
     /**
      * Create a new controller instance.
      *
@@ -31,6 +34,9 @@ class ProjectsController extends Controller
         $this->ProjectsModel = new \App\ProjectsModel;
         $this->BOQModel = new \App\BOQModel;
         $this->DailyProgressModel = new \App\DailyProgressModel;
+        $this->LogsModel = new \App\LogsModel;
+        $this->LocationsModel = new \App\LocationsModel;
+
         $this->LocationsController = new \App\Http\Controllers\LocationsController;
         $this->BOQManagementController = new \App\Http\Controllers\BOQManagementController;
     }
@@ -97,6 +103,9 @@ class ProjectsController extends Controller
     // Add Project
     public function addProject(Request $request)
     {
+        $user_data = Session::get('user')[0];
+        $now = Carbon::now();
+
         $boq_details = [];
         $total_qty = 0;
         foreach ($request['row'] as $key => $value) {
@@ -122,14 +131,43 @@ class ProjectsController extends Controller
         
         $result = $this->ProjectsModel->addProject($data);
 
+        $details = [
+            'user' => $user_data['username'],
+            'timestamp' => $now,
+            'result' => 'null'
+        ];
+
         if($result != false)
         {
+            $details['result'] = 'success';
+            $this->LogsModel->createProjectLog($user_data, $now, $details, $request['project_code']);
             return back()->with('success', 'Project added successfully.');
         }
         else
         {
+            $details['result'] = 'failed';
+            $this->LogsModel->createProjectLog($user_data, $now, $details, $request['project_code']);
             return back()->with('danger', 'Something went wrong. Please check your inputs and try again.');
         }
+    }
+
+    public function getDatesFromRange($date_time_from, $date_time_to)
+    {
+        // cut hours, because not getting last day when hours of time to is less than hours of time_from
+        // see while loop
+        $start = Carbon::createFromFormat('Y-m-d', substr($date_time_from, 0, 10));
+        $end = Carbon::createFromFormat('Y-m-d', substr($date_time_to, 0, 10));
+
+        $dates = [];
+
+        while ($start->lte($end)) {
+
+            $dates[] = $start->copy()->format('Y-m-d');
+
+            $start->addDay();
+        }
+
+        return $dates;
     }
 
     // Fetch all the Project Details
@@ -143,6 +181,7 @@ class ProjectsController extends Controller
             $date_start = Carbon::parse($data['date_start']);
             $date_end = Carbon::parse($data['date_end']);
             $days = $date_start->diffInDays($date_end) + 1;
+            $date_range = $this->getDatesFromRange($date_start, $date_end);
             $total_progress = 0;
             
             // convert BOQ details from object to array
@@ -173,6 +212,7 @@ class ProjectsController extends Controller
             // Get CTRL Number and Desciption
             $data['boq_details'] = $boq_details;
             $data['number_of_days'] = $days;
+            $data['date_range'] = $date_range;
             $data['total_progress'] = $total_progress;
             
             foreach ($data['boq_details'] as $key => $value) {
@@ -194,19 +234,50 @@ class ProjectsController extends Controller
     // Edit Project Date(s)
     public function editProjectDate(Request $request)
     {
+        $user_data = Session::get('user')[0];
+        $now = Carbon::now();
+
         $project_id = $request['project_id'];
         $project_code = $request['project_code'];
         $db_field = $request['db_field'];
         $date_value = Carbon::parse($request['date_value']);
 
         $update_date = $this->ProjectsModel->editProjectDate($project_id, $project_code, $db_field, $date_value);
+
+        $details = [
+            'user' => $user_data['username'],
+            'timestamp' => $now,
+            'project_id' => $request['project_id'],
+            'project_code' => $request['project_code'],
+            'result' => 'null'
+        ];
+
         if($update_date == true)
         {
+            $details['result'] = 'success';
+            $this->LogsModel->createUpdateProjectLog($user_data, $now, $details);
             return response()->json($date_value->toDateString());
         }
         else
         {
+            $details['result'] = 'failed';
+            $this->LogsModel->createUpdateProjectLog($user_data, $now, $details);
             return false;
         }
+    }
+
+    // Add Scope Of Work To Project
+    public function addScopeOfWork($project_id, $project_code)
+    {
+        $user_data = Session::get('user')[0];
+        $now = Carbon::now();
+
+        $project_details = $this->ProjectsModel->getAllProjectDetails($project_id, $project_code);
+
+        $location = $this->LocationsModel->getLocationDetails($project_details['location']);
+        $project_details['location'] = $location['location'];
+        $project_details['abbrv'] = $location['abbrv'];
+        
+        return view('tab-content.add-scope-of-work', compact('user_data','project_details'));
     }
 }

@@ -69,4 +69,21 @@ class DailyProgressModel extends Model
 			}
     	}
     }
+
+    // Update Daily Progress
+    public function updateDailyProgress($data, $new_data)
+    {
+        $update_progress = $this::where('project_id', $data['project_id'])
+                                ->where('project_code', $data['project_code'])
+                                ->where('boq_control_number', $data['boq_control_number'])
+                                ->update($new_data);
+        if($update_progress)
+        {
+            return $update_progress;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
