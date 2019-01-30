@@ -36,6 +36,43 @@ class LocationsController extends Controller
     {
         $user_data = Session::get('user')[0];
         $locations = $this->getAllLocations();
+        
+        $nlz = [];
+        $slz = [];
+        $gmm = [];
+        $vis = [];
+        $min = [];
+
+        foreach ($locations as $key => $value) {
+            $code = explode('_', $value['abbrv'])[0];
+
+            switch ($code) {
+                case 'nlz':
+                    $nlz[] = $value;
+                    break;
+                case 'slz':
+                    $slz[] = $value;
+                    break;
+                case 'gmm':
+                    $gmm[] = $value;
+                    break;
+                case 'vis':
+                    $vis[] = $value;
+                    break;
+                case 'min':
+                    $min[] = $value;
+                    break;
+            }
+        }
+
+        $locations = [
+            'nlz' => $nlz,
+            'slz' => $slz,
+            'gmm' => $gmm,
+            'vis' => $vis,
+            'min' => $min
+        ];
+        
         return view('tab-content.locations', compact('locations','user_data'));
     }
 

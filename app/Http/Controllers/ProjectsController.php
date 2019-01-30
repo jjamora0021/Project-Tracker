@@ -16,6 +16,7 @@ use App\Http\Controllers\BOQManagementController;
 use Carbon\Carbon;
 use DB;
 use Session;
+use Input;
 
 class ProjectsController extends Controller
 {
@@ -277,7 +278,89 @@ class ProjectsController extends Controller
         $location = $this->LocationsModel->getLocationDetails($project_details['location']);
         $project_details['location'] = $location['location'];
         $project_details['abbrv'] = $location['abbrv'];
+
+        // index for boq_details array is from the row number which starts at 1 (row counter).
+        $boq_details = $this->objectToArray(json_decode($project_details['boq_details']));
+        $boqs = $this->BOQModel->getBOQs();
+        return view('tab-content.add-scope-of-work', compact('user_data','project_details','boq_details','boqs'));
+    }
+
+    // Update Scope Of Work List
+    public function updateScopeOfWorkList(Request $request)
+    {
+        $user_data = Session::get('user')[0];
+        $now = Carbon::now();
+
+        $boq_details = [];
+        $total_qty = 0;
+        foreach ($request['row'] as $key => $value) {
+            $boq_details[$key]['controlnumber'] = $value['controlnumber'];
+            $boq_details[$key]['quantity'] = (int)$value['quantity'];
+            $boq_details[$key]['price'] = (int)$value['price'];
+            $boq_details[$key]['total'] = (int)$value['total'];
+            $total_qty += (int)$value['quantity'];
+        }
         
-        return view('tab-content.add-scope-of-work', compact('user_data','project_details'));
+        $data = array(
+            'boq_details' => json_encode($boq_details),
+            'total_project_cost' => $request['grand_total_cost'],
+            'total_project_qty' => $total_qty
+        );
+
+        $result = $this->ProjectsModel->updateScopeOfWorkList($request['project_id'],$request['project_code'],$data);
+
+        $details = [
+            'user' => $user_data['username'],
+            'boq_details' => json_encode($boq_details),
+            'timestamp' => $now,
+            'result' => 'null'
+        ];
+
+        if($result != false)
+        {
+            $details['result'] = 'success';
+            $this->LogsModel->createAddScopeOfWorkLog($user_data, $now, $details, $request['project_code']);
+            return back()->with('success', 'Added Scope of Work successfully!');
+        }
+        else
+        {
+            $details['result'] = 'failed';
+            $this->LogsModel->createAddScopeOfWorkLog($user_data, $now, $details, $request['project_code']);
+            return back()->with('danger', 'Something went wrong. Please check your inputs and try again.');
+        }
+    }
+
+    public function loadLocationProjects($location)
+    {
+        $user_data = Session::get('user')[0];
+        $now = Carbon::now();
+
+        $projects = $this->ProjectsModel->loadLocationProjects($location);
+        if(!empty($projects))
+        {
+            $total_progress = 0;
+            $boq = [];
+            foreach ($projects as $key => $value) {
+                $boq = $this->objectToArray(json_decode($value['boq_details']));
+                foreach ($boq as $idx => $val) {
+                    $daily_progress = $this->DailyProgressModel->getDailyProgress($value['id'],$value['project_code'],$val['controlnumber']);
+                    if($daily_progress != false)
+                    {
+                        $boq[$idx]['total_progress'] = $daily_progress[0]['total_progress'];
+                    }
+                    else
+                    {
+                        $boq[$idx]['total_progress'] = 0;
+                    }
+                }
+                $projects[$key]['boq_details'] = $boq;
+            }
+            
+            return view('tab-content.projects-location', compact('projects','user_data','location'));
+        }
+        else
+        {
+            return view('tab-content.projects-location', compact('projects','user_data','location'));
+        }
     }
 }

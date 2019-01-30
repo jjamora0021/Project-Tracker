@@ -17,6 +17,20 @@ class LogsModel extends Model
 
     protected $table = 'logs';
 
+    // Fetch All Logs
+    public function getAllLogs()
+    {
+        $logs = ($this::all())->toArray();
+        return $logs;
+    }
+
+    // Get Log Details
+    public function getLogDetails($id)
+    {
+        $details = ($this::where('id',$id)->get())[0]->toArray();
+        return $details;
+    }
+
     /********************** Login **********************/
     // Create Access logs
     public function createLoginLog($user_data, $timestamp)
@@ -139,6 +153,20 @@ class LogsModel extends Model
         $logs = $this::insert([
                 'username' => $user_data['username'],
                 'action' => 'Approved request to Update Daily Progress',
+                'project_code' => $project_code,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
+
+    // Create Add Scope Of Work Logs
+    public function createAddScopeOfWorkLog($user_data, $timestamp, $details, $project_code)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Added Scope of Work',
                 'project_code' => $project_code,
                 'details' => json_encode($details),
                 'user_role_given' => $user_data['user_role'],

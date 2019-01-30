@@ -71,6 +71,10 @@ Route::get('get-all-project-details', 'ProjectsController@getAllProjectDetails')
 Route::get('edit-project-date', 'ProjectsController@editProjectDate');
 // Add Scope of Work to project
 Route::get('add-scope-of-work/{project_id}/{project_code}', 'ProjectsController@addScopeOfWork');
+// Update Scope of Work list on a project
+Route::post('add-scope-of-work-to-project', 'ProjectsController@updateScopeOfWorkList');
+// Load Projects on a specified Location
+Route::get('projects/{location}', 'ProjectsController@loadLocationProjects');
 
 /**
  * Daily Progress
@@ -89,3 +93,12 @@ Route::get('approve-to-update-progress', 'DailyProgressController@approveRequest
 
 // Load BOM Management Page
 Route::get('bom-management', 'BOMManagementController@index');
+
+/**
+ * Logs
+ */
+
+// Load All Logs
+Route::get('logs', 'LogsController@index');
+// Get Log Details
+Route::get('get-log-details', 'LogsController@getLogDetails');

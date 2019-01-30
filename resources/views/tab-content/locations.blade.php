@@ -36,11 +36,83 @@
                             @else
                                 <div class="row" id="locations-buttons-container">
                                     @foreach($locations as $key => $loc)
-                                        <div class="col-md-4">
-                                            <a href="#">
-                                                <button id="{{ $loc['abbrv'] }}" class="btn btn-xl btn-black col-md-12 mb-3 location-tile text-uppercase">{{ $loc['location'] }}</button>
-                                            </a>
-                                        </div>
+                                        @switch($key)
+                                            @case('nlz')
+                                                <h4 class="text-capitalize mb-4">North Luzon</h4>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        @foreach($loc as $idx => $val)
+                                                            <div class="col-md-4">
+                                                                <a href="{{ url('projects') }}/{{ $val['location'] }}">
+                                                                    <button id="{{ $val['abbrv'] }}" class="btn btn-xl btn-black col-md-12 mb-3 location-tile text-uppercase">{{ $val['location'] }}</button>
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <hr class="col-md-12 p-0">
+                                                @break
+                                            @case('slz')
+                                                <h4 class="text-capitalize mb-4">South Luzon</h4>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        @foreach($loc as $idx => $val)
+                                                            <div class="col-md-4">
+                                                                <a href="{{ url('projects') }}/{{ $val['location'] }}">
+                                                                    <button id="{{ $val['abbrv'] }}" class="btn btn-xl btn-black col-md-12 mb-3 location-tile text-uppercase">{{ $val['location'] }}</button>
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <hr class="col-md-12 p-0">
+                                                @break
+                                            @case('gmm')
+                                               <h4 class="text-capitalize mb-4">Greater Metro Manila</h4>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        @foreach($loc as $idx => $val)
+                                                            <div class="col-md-4">
+                                                                <a href="{{ url('projects') }}/{{ $val['location'] }}">
+                                                                    <button id="{{ $val['abbrv'] }}" class="btn btn-xl btn-black col-md-12 mb-3 location-tile text-uppercase">{{ $val['location'] }}</button>
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <hr class="col-md-12 p-0">
+                                                @break
+                                            @case('vis')
+                                                <h4 class="text-capitalize mb-4">Visayas</h4>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        @foreach($loc as $idx => $val)
+                                                            <div class="col-md-4">
+                                                                <a href="{{ url('projects') }}/{{ $val['location'] }}">
+                                                                    <button id="{{ $val['abbrv'] }}" class="btn btn-xl btn-black col-md-12 mb-3 location-tile text-uppercase">{{ $val['location'] }}</button>
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <hr class="col-md-12 p-0">
+                                                @break
+                                            @case('min')
+                                                <h4 class="text-capitalize mb-4">Mindanao</h4>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        @foreach($loc as $idx => $val)
+                                                            <div class="col-md-4">
+                                                                <a href="{{ url('projects') }}/{{ $val['location'] }}">
+                                                                    <button id="{{ $val['abbrv'] }}" class="btn btn-xl btn-black col-md-12 mb-3 location-tile text-uppercase">{{ $val['location'] }}</button>
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                <hr class="col-md-12 p-0">
+                                                @break
+                                        @endswitch
                                     @endforeach
                                 </div>
                             @endif

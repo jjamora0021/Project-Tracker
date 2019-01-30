@@ -44,7 +44,7 @@
                             <!-- Start Date -->
                             <div class="form-group col-md-2">
                                 <label>Start Date: </label>
-                                <input class="datepicker" data-date-format="mm/dd/yyyy" name="date_start" required id="startDate" placeholder="01/01/2019" disabled>
+                                <input type="text" class="form-control" value="{{ $project_details['date_start'] }}" disabled>
                                 @if ($errors->has('date-start'))
                                     <div class="alert alert-danger mt-2 font-weight-bold">{{ $errors->first('date-start') }} Please dont leave this blank or with just only white spaces.</div>
                                 @endif
@@ -52,7 +52,7 @@
                             <!-- End Date -->
                             <div class="form-group col-md-2">
                                 <label>End Date: </label>
-                                <input class="datepicker" data-date-format="mm/dd/yyyy" name="date_end" required id="endDate" placeholder="01/01/2019" disabled>
+                                <input type="text" class="form-control" value="{{ $project_details['date_end'] }}" disabled>
                                 @if ($errors->has('date-end'))
                                     <div class="alert alert-danger mt-2 font-weight-bold">{{ $errors->first('date-end') }} Please dont leave this blank or with just only white spaces.</div>
                                 @endif
@@ -87,56 +87,62 @@
                                 @endif
                             </div>
                         </div>
-
-                        <!-- Scope Of Work/Activity -->
-                        <div class="form-group col-md-12 mt-3 p-0" id="scope-of-work-section">
-                            <label>Scope Of Work</label>
-                            <!-- Materials Reference Number -->
-                            <div class="form-group">
-                                <table class="table" width="100%" style="border: solid 1px">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th width="10%">Control Number</th>
-                                            <th width="55%">Description</th>
-                                            <th width="5%" class="text-center">Unit</th>
-                                            <th width="7%" class="text-center">Quantity</th>
-                                            <th width="7%" class="text-center">Price</th>
-                                            <th width="10%" class="text-center">Total (Peso)</th>
-                                            <th width="6%"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr id="row-1">
-                                            <td>
-                                                <input type="text" class="form-control" name="row[1][controlnumber]" id="row-ctrl-number-1" value="0" required onfocus="showAllBOQ(1);">
-                                            </td>
-                                            <td id="row-description-1"></td>
-                                            <td id="row-unit-1" class="text-uppercase text-center"></td>
-                                            <td class="text-center">
-                                                <input type="text" class="form-control text-center" name="row[1][quantity]" id="row-quantity-1" value="0" required onkeyup="calculateTotalPrice('row-1',1);">
-                                            </td>
-                                            <td class="text-center">
-                                                <input type="text" class="form-control text-center" name="row[1][price]" id="row-price-1" value="0" required onkeyup="calculateTotalPrice('row-1',1);">
-                                            </td>
-                                            <td class="text-center" id="td-row-total-1">0</td>
-                                            <input class="total-price" type="hidden" value="0" name="row[1][total]" id="row-total-1">
-                                            <td>
-                                                <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" title="Add row" onclick="addRow(1);"><i class="fas fa-plus"></i></button>
-                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete row" onclick="deleteRow(1);" disabled><i class="fas fa-minus"></i></button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <form action="{{ url('add-scope-of-work-to-project') }}" method="POST">
+                            <input type="hidden" name="project_id" value="{{ $project_details['id'] }}">
+                            <input type="hidden" name="project_code" value="{{ $project_details['project_code'] }}">
+                            @csrf
+                            <!-- Scope Of Work/Activity -->
+                            <div class="form-group col-md-12 mt-3 p-0" id="scope-of-work-section">
+                                <label>Scope Of Work</label>
+                                <!-- Materials Reference Number -->
+                                <div class="form-group">
+                                    <table class="table" width="100%" style="border: solid 1px">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th width="10%">Control Number</th>
+                                                <th width="55%">Description</th>
+                                                <th width="5%" class="text-center">Unit</th>
+                                                <th width="7%" class="text-center">Quantity</th>
+                                                <th width="7%" class="text-center">Price</th>
+                                                <th width="10%" class="text-center">Total (Peso)</th>
+                                                <th width="6%"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($boq_details as $key => $value)
+                                                <tr id="row-{{ $key }}">
+                                                    <td>
+                                                        <input type="text" class="form-control" name="row[{{ $key }}][controlnumber]" id="row-ctrl-number-{{ $key }}" value="{{ $value['controlnumber'] }}" readonly>
+                                                    </td>
+                                                    <td id="row-description-{{ $key }}"></td>
+                                                    <td id="row-unit-{{ $key }}" class="text-uppercase text-center"></td>
+                                                    <td class="text-center">
+                                                        <input type="text" class="form-control text-center" name="row[{{ $key }}][quantity]" id="row-quantity-{{ $key }}" value="{{ $value['quantity'] }}" readonly>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <input type="text" class="form-control text-center" name="row[{{ $key }}][price]" id="row-price-{{ $key }}" value="{{ $value['price'] }}" readonly>
+                                                    </td>
+                                                    <td class="text-center" id="td-row-total-{{ $key }}">{{ number_format($value['total']) }}</td>
+                                                    <input class="total-price" type="hidden" value="{{ $value['total'] }}" name="row[{{ $key }}][total]" id="row-total-{{ $key }}">
+                                                    <td>
+                                                        <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" title="Add row" onclick="addRow({{ $key }});"><i class="fas fa-plus"></i></button>
+                                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete row" onclick="deleteRow({{ $key }});" disabled><i class="fas fa-minus"></i></button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <h5 class="text-right" onclick="showGrandTotal();"><small class="text-right text-danger">Click to show grand total</small><br>Grand Total: <span id="grand-total" style="text-decoration: underline; text-decoration-style: double;"></span></h5>
+                                <input type="hidden" id="grand_total_cost" name="grand_total_cost" value="">
                             </div>
-                            <h5 class="text-right" onclick="showGrandTotal();"><small class="text-right text-danger">Click to show grand total</small><br>Grand Total: <span id="grand-total" style="text-decoration: underline; text-decoration-style: double;"></span></h5>
-                            <input type="hidden" id="grand_total_cost" name="grand_total_cost" value="">
-                        </div>
 
-                        <div class="row mt-5 mb-3">
-                            <div class="form-group col-md-12">
-                                <button id="create-project-add-btn" type="button" class="btn btn-sm btn-primary float-right" disabled>Submit</button>
+                            <div class="row mt-5 mb-3">
+                                <div class="form-group col-md-12">
+                                    <button id="create-project-add-btn" type="submit" class="btn btn-sm btn-primary float-right" disabled>Submit</button>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -205,18 +211,18 @@
         var deleteRow = 'deleteRow('+ctr+');';
         var new_row = '<tr id="row-'+ctr+'">\
                             <td>\
-                                <input type="text" class="form-control" name="row['+ctr+'][controlnumber]" id="row-ctrl-number-'+ctr+'" value="0" required onfocus="'+onFocus+'">\
+                                <input type="text" class="form-control" name="row['+ctr+'][controlnumber]" id="row-ctrl-number-'+ctr+'" value="" required onfocus="'+onFocus+'">\
                             </td>\
                             <td id="row-description-'+ctr+'"></td>\
                             <td id="row-unit-'+ctr+'" class="text-uppercase text-center"></td>\
                             <td class="text-center">\
-                                <input type="text" class="form-control text-center" name="row['+ctr+'][quantity]" id="row-quantity-'+ctr+'" value="0" required onkeyup="'+onBlur+'">\
+                                <input type="text" class="form-control text-center" name="row['+ctr+'][quantity]" id="row-quantity-'+ctr+'" value="" required onkeyup="'+onBlur+'">\
                             </td>\
                             <td class="text-center">\
-                                <input type="text" class="form-control text-center" name="row['+ctr+'][price]" id="row-price-'+ctr+'" value="0" required onkeyup="'+onBlur+'">\
+                                <input type="text" class="form-control text-center" name="row['+ctr+'][price]" id="row-price-'+ctr+'" value="" required onkeyup="'+onBlur+'">\
                             </td>\
                             <td class="text-center" id="td-row-total-'+ctr+'">0</td>\
-                            <input type="hidden" class="total-price" value="0" name="row['+ctr+'][total]" id="row-total-'+ctr+'">\
+                            <input type="hidden" class="total-price" value="" name="row['+ctr+'][total]" id="row-total-'+ctr+'">\
                             <td>\
                                 <button type="button" class="btn btn-success btn-sm" onclick="'+addRow+'"><i class="fas fa-plus"></i></button>\
                                 <button type="button" class="btn btn-danger btn-sm" onclick="'+deleteRow+'"><i class="fas fa-minus"></i></button>\
@@ -273,6 +279,7 @@
             data: { "control_number" : boq_control_number},
         })
         .done(function(result) {
+            console.log(result)
             if(result != false)
             {
                 $('#row-ctrl-number-'+row_number).val(result['control_number']);

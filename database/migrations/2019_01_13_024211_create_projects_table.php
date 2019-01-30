@@ -22,7 +22,7 @@ class CreateProjectsTable extends Migration
             $table->string('site_name');
             $table->date('date_start');
             $table->date('date_end');
-            $table->string('boq_details');
+            $table->longText('boq_details');
             $table->integer('total_project_cost');
             $table->integer('total_project_qty');
             $table->timestamps();
