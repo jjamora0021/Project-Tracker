@@ -629,12 +629,14 @@
             },
         })
         .done(function(result) {
+            console.log(result)
             $('#view-daily-progress-container #add-scope-of-work-btn-container a').attr('href',"{{ url('add-scope-of-work') }}/"+id+"/"+project_code);
             var table = $('#daily-progress-table');
             table.empty();
             var initalTable = '<thead>\
                                 <tr class="bg-dark text-white">\
                                     <th>Activity/Scope Of Work</th>\
+                                    <th>As Plan BOQ</th>\
                                 </tr>\
                                 </thead>\
                                 <tbody></tbody>';
@@ -642,6 +644,7 @@
             table.empty().append('<thead>\
                                     <tr class="bg-dark text-white">\
                                         <th>Activity/Scope Of Work</th>\
+                                        <th>As Plan BOQ</th>\
                                     </tr>\
                                 </thead>\
                                 <tbody></tbody>');
@@ -657,6 +660,7 @@
             $.each(result['boq_details'], function(index, value) {
                 var ctr_num = '<h4>'+value['controlnumber']+'</h4>';
                 var description = value['boq_description'];
+                var as_plan_boq = value['quantity'];
                 // create blank TDs
                 var blank_tds = [];
                 var total_prog = 0;
@@ -672,7 +676,7 @@
                         blank_tds+='<td ondblclick="'+addProgress+'" id="td-'+i+'" class="text-center day-progress">0</td>';   
                     }
                 }
-                table_body.append('<tr id="'+value['controlnumber']+'"><td>'+ctr_num+'<br>'+description+'</td>'+blank_tds+'</tr>');
+                table_body.append('<tr id="'+value['controlnumber']+'"><td>'+ctr_num+'<br>'+description+'</td><td class="text-center">'+as_plan_boq+'</td>'+blank_tds+'</tr>');
                 
                 $('#daily-progress-table tbody tr#'+value['controlnumber']+' td:last-child').removeAttr('ondblclick').removeClass('clickable').empty().text(value['boq_total_progress']);
                 // console.log(value);
@@ -685,7 +689,7 @@
                 "scrollX": true,
                 "scrollCollapse": true,
                 "fixedColumns": {
-                    leftColumns: 1,
+                    leftColumns: 2,
                     rightColumns: 1
                 }
             });

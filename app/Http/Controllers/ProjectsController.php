@@ -198,7 +198,7 @@ class ProjectsController extends Controller
                 $boq_details[$key]['quantity'] = (int)$value['quantity'];
                 $boq_details[$key]['price'] = (int)$value['price'];
                 $boq_details[$key]['total'] = (int)$value['total'];
-
+                
                 $daily_progress = $this->DailyProgressModel->getDailyProgress($request['id'],$request['project_code'],$value['controlnumber']);
                 
                 if($daily_progress != false)
@@ -224,7 +224,7 @@ class ProjectsController extends Controller
                 }
                 $data['boq_details'][$key]['boq_total_progress'] = $boq_total_progress;
             }
-
+            
             return response()->json($data);
         }
         else
