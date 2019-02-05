@@ -103,7 +103,7 @@
     function InitiateLogsTable()
     {
         $('.table').DataTable({
-            "order": []
+            "order": [[ 6, "desc" ]]
         });
     }
 
@@ -112,7 +112,7 @@
         $('#log-details').modal({keyboard:false,backdrop:"static"});
         $.ajax({
             url: "{{ url('get-log-details') }}",
-            data: { "id" : id},
+            data: { "id" : id },
         })
         .done(function(response) {
             console.log(response);

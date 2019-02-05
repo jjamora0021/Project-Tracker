@@ -50,7 +50,7 @@
                                         <th width="60%" id="description">Description</th>
                                         <th width="10%" class="text-center" id="unit">Unit</th>
                                         @if($user_data['user_role'] == 'admin')
-                                            <th width="5%" class="text-center" id="actions">Actions</th>
+                                            <!-- <th width="5%" class="text-center" id="actions">Actions</th> -->
                                         @endif
                                     </tr>
                                 </thead>
@@ -63,10 +63,10 @@
                                                 <td>{{ $value['description'] }}</td>
                                                 <td class="text-center text-uppercase">{{ $value['unit'] }}</td>
                                                 @if($user_data['user_role'] == 'admin')
-                                                    <td class="text-center">
+                                                    <!-- <td class="text-center">
                                                         <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['control_number'] }}"><i class="fas fa-edit"></i></button>
                                                         <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['control_number'] }}"><i class="far fa-trash-alt"></i></button>
-                                                    </td>
+                                                    </td> -->
                                                 @endif
                                             </tr>
                                         @endforeach

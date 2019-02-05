@@ -174,4 +174,46 @@ class LogsModel extends Model
                 'updated_at' => $timestamp
             ]);
     }
+
+    // Create Add BOM Logs
+    public function createBOMCreationLog($user_data, $timestamp, $details)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Added BOM',
+                'project_code' => NULL,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
+
+    // Create Update BOM Logs
+    public function createUpdateBOMLog($user_data, $timestamp, $details)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Updated BOM',
+                'project_code' => NULL,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
+
+    // Create Delete BOM Logs
+    public function createDeleteBOMLog($user_data, $timestamp, $details)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Deleted BOM',
+                'project_code' => NULL,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
 }

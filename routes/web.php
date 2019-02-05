@@ -93,6 +93,14 @@ Route::get('approve-to-update-progress', 'DailyProgressController@approveRequest
 
 // Load BOM Management Page
 Route::get('bom-management', 'BOMManagementController@index');
+// Save BOM
+Route::get('save-bom', 'BOMManagementController@saveBOM');
+// Get BOM details
+Route::get('get-bom-details', 'BOMManagementController@getBOMDetails');
+// Update BOM details
+Route::get('update-bom', 'BOMManagementController@updateBOMDetails');
+// Delete BOM
+Route::get('delete-bom', 'BOMManagementController@deleteBOM');
 
 /**
  * Logs

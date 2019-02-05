@@ -40,7 +40,7 @@
                                             @case('nlz')
                                                 <h4 class="text-capitalize mb-4">North Luzon</h4>
                                                 <div class="col-md-12">
-                                                    <div class="row">
+                                                    <div class="row nlz">
                                                         @foreach($loc as $idx => $val)
                                                             <div class="col-md-4">
                                                                 <a href="{{ url('projects') }}/{{ $val['location'] }}">
@@ -55,7 +55,7 @@
                                             @case('slz')
                                                 <h4 class="text-capitalize mb-4">South Luzon</h4>
                                                 <div class="col-md-12">
-                                                    <div class="row">
+                                                    <div class="row slz">
                                                         @foreach($loc as $idx => $val)
                                                             <div class="col-md-4">
                                                                 <a href="{{ url('projects') }}/{{ $val['location'] }}">
@@ -70,7 +70,7 @@
                                             @case('gmm')
                                                <h4 class="text-capitalize mb-4">Greater Metro Manila</h4>
                                                 <div class="col-md-12">
-                                                    <div class="row">
+                                                    <div class="row gmm">
                                                         @foreach($loc as $idx => $val)
                                                             <div class="col-md-4">
                                                                 <a href="{{ url('projects') }}/{{ $val['location'] }}">
@@ -85,7 +85,7 @@
                                             @case('vis')
                                                 <h4 class="text-capitalize mb-4">Visayas</h4>
                                                 <div class="col-md-12">
-                                                    <div class="row">
+                                                    <div class="row vis">
                                                         @foreach($loc as $idx => $val)
                                                             <div class="col-md-4">
                                                                 <a href="{{ url('projects') }}/{{ $val['location'] }}">
@@ -100,7 +100,7 @@
                                             @case('min')
                                                 <h4 class="text-capitalize mb-4">Mindanao</h4>
                                                 <div class="col-md-12">
-                                                    <div class="row">
+                                                    <div class="row min">
                                                         @foreach($loc as $idx => $val)
                                                             <div class="col-md-4">
                                                                 <a href="{{ url('projects') }}/{{ $val['location'] }}">
@@ -207,6 +207,7 @@
             $('#add-location-modal #location').val('');
             if(response == 'true')
             {
+                var area = code.split('_')[0];
                 $('.alert-success').empty().text('Location successfully added!').removeClass('d-none');
                 setTimeout(function() {
                     $('.alert-success').addClass('d-none')
@@ -216,7 +217,7 @@
                                         <button class="btn btn-xl btn-black col-md-12 mb-3 location-tile text-uppercase">'+location+'</button>\
                                     </a>\
                                 </div>';
-                $('#locations-buttons-container').append(locations);
+                $('#locations-buttons-container .'+area).append(locations);
             }
             else
             {
