@@ -7,6 +7,7 @@
 <div id="content-wrapper">
     <!-- Tab panes -->
     <div class="tab-content">
+        <div class="alert alert-success text-center font-weight-bold d-none"></div>
         <div class="container text-center" id="alert-container">
             @if(Session::has('success'))
                 <div class="alert alert-success text-center font-weight-bold">
@@ -53,6 +54,7 @@
                                         <th class="text-center">Work Order Number</th>
                                         <th class="text-center">Start Date</th>
                                         <th class="text-center">End Date</th>
+                                        <th class="text-center">Status</th>
                                         <th class="text-center">Total Percentage</th>
                                         <th class="text-center" id="actions">Actions</th>
                                     </tr>
@@ -83,6 +85,13 @@
                                                     @endif
                                                 @endforeach
                                                 <?php $total_progress = ($total_progress / $value['total_project_qty']) * 100; ?>
+
+                                                @foreach(Config::get('status') as $key => $stat)
+                                                    @if($key == $value['status'])
+                                                        <td class="text-center clickable" id="status_{{ $value['project_code'] }}" ondblclick="editStatus('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['status'] }}','status')">{{ $stat }}</td>
+                                                    @endif
+                                                @endforeach
+
                                                 <td class="text-center">{{ (int)$total_progress }}%</td>
                                                 <td class="text-center">
                                                     <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['site_name'] }} Progress" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}','{{ $days }}');"><i class="fas fa-edit"></i></button>
@@ -197,7 +206,7 @@
 
                             <div class="row mb-3">
                                 <!-- Project Code -->
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <label>Project Code: </label>
                                     <input class="form-control" name="project_code" id="project-code" placeholder="Ex: 00001" required>
                                     @if ($errors->has('project_code'))
@@ -206,7 +215,7 @@
                                 </div>
 
                                 <!-- Work Order -->
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <label>Work Order #: </label>
                                     <input type="text" class="form-control" name="work_order_number" id="work-order-number" placeholder="Ex: 0001" required>
                                     @if ($errors->has('work_order_number'))
@@ -215,12 +224,23 @@
                                 </div>
 
                                 <!-- Materials Reference Number -->
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <label>CCID: </label>
                                     <input type="text" class="form-control" name="ccid" id="ccid" placeholder="Ex: 1234567890" required>
                                     @if ($errors->has('ccid'))
                                         <div class="alert alert-danger mt-2 font-weight-bold">{{ $errors->first('ccid') }} Please dont leave this blank or with just only white spaces.</div>
                                     @endif
+                                </div>
+
+                                <!-- Project Status -->
+                                <div class="form-group col-md-3">
+                                    <label>Status: </label>
+                                    <select class="custom-select form-control" id="project-status" name="status" required>
+                                        <option selected>Select Status</option>
+                                        @foreach(Config::get('status') as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
@@ -422,6 +442,45 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Edit Project Status -->
+            <div class="modal" tabindex="-1" role="dialog" id="edit-project-status-modal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="edit-status-header">Edit Project Status</h5>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="hidden" id="project-id" value="">
+                                            <input type="hidden" id="project-code" value="">
+                                            <input type="hidden" id="db-field" value="">
+                                            <div class="form-inline">
+                                                <label>Status: </label>
+                                                <select class="custom-select form-control" id="project-status" name="status" required>
+                                                    <option selected>Select Status</option>
+                                                    @foreach(Config::get('status') as $key => $value)
+                                                        <option value="{{ $key }}">{{ $value }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 text-right" style="padding-top: 30px !important;">
+                                            <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="updateProjectStatus();">Update</button> 
+                                            <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -760,6 +819,54 @@
         $(modal_id+' #db-field').val(db_field);
         $(modal_id+' #date-type').val(date_type);
         $(modal_id+' #edit-date').val(current_date_value);
+    }
+
+    // Edit Status
+    function editStatus(project_id, project_code, status, db_field)
+    {
+        var modal_id = '#edit-project-status-modal';
+        $(modal_id).modal({ "backdrop":"static","keyboard":false });
+        $(modal_id+' #project-id').val(project_id);
+        $(modal_id+' #project-code').val(project_code);
+        $(modal_id+' #db-field').val(db_field);
+        $(modal_id+' #project-status').val(status);
+    }
+
+    function updateProjectStatus()
+    {
+        var modal_id = '#edit-project-status-modal';
+        var project_id = $(modal_id+' #project-id').val();
+        var project_code = $(modal_id+' #project-code').val();
+        var db_field = $(modal_id+' #db-field').val();
+        var status = $(modal_id+' #project-status').val();
+
+        $.ajax({
+            url: "{{ url('edit-project-status') }}",
+            data: {
+                "project_id" : project_id,
+                "project_code" : project_code,
+                "db_field" : db_field,
+                "status" : status
+            },
+        })
+        .done(function(response) {
+            if(response['response'] == 'true')
+            {
+                $('.alert-success').empty().text('Status has been successfully modified!').removeClass('d-none');
+                setTimeout(function() {
+                    $('.alert').addClass('d-none')
+                }, 10000);
+                var ondbclick = "editStatus('"+project_id+"','"+project_code+"','"+status+"','"+db_field+"');"
+                $('td#status'+'_'+project_code).attr('ondblclick',ondbclick).empty().text(response['status']);
+            }
+            else
+            {
+                alert('Something went wrong. Please try again.')
+            }
+        })
+        .fail(function() {
+            console.log("error");
+        });
     }
 
     // Save updated Project Date(s)

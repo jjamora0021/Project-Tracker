@@ -101,6 +101,23 @@ class ProjectsModel extends Model
         }
     }
 
+    public function editProjectStatus($project_id, $project_code, $db_field, $status)
+    {
+        $data = [
+            $db_field => $status
+        ];
+        
+        $result = $this::where('id', $project_id)->where('project_code', $project_code)->update($data);
+        if($result)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     // Update Scope Of Work List on a Project
     public function updateScopeOfWorkList($id, $project_code, $data)
     {

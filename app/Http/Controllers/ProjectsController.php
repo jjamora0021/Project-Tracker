@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use DB;
 use Session;
 use Input;
+use Config;
 
 class ProjectsController extends Controller
 {
@@ -263,6 +264,52 @@ class ProjectsController extends Controller
         {
             $details['result'] = 'failed';
             $this->LogsModel->createUpdateProjectLog($user_data, $now, $details);
+            return false;
+        }
+    }
+
+    // Edit Project Status
+    public function editProjectStatus(Request $request)
+    {
+        $user_data = Session::get('user')[0];
+        $now = Carbon::now();
+
+        $project_id = $request['project_id'];
+        $project_code = $request['project_code'];
+        $db_field = $request['db_field'];
+        $status = $request['status'];
+
+        $update_status = $this->ProjectsModel->editProjectStatus($project_id, $project_code, $db_field, $status);
+
+        $details = [
+            'user' => $user_data['username'],
+            'timestamp' => $now,
+            'project_id' => $request['project_id'],
+            'project_code' => $request['project_code'],
+            'result' => 'null'
+        ];
+
+        if($update_status == true)
+        {
+            $details['result'] = 'success';
+            $this->LogsModel->createUpdateProjectStatusLog($user_data, $now, $details, $project_code);
+            $set_status = Config::get('status');
+            foreach ($set_status as $key => $value) {
+                if($status == $key)
+                {
+                    $status = $value;
+                }
+            }
+            $response = [
+                'response' => 'true',
+                'status' => $status
+            ];
+            return response()->json($response);
+        }
+        else
+        {
+            $details['result'] = 'failed';
+            $this->LogsModel->createUpdateProjectStatusLog($user_data, $now, $details, $project_code);
             return false;
         }
     }

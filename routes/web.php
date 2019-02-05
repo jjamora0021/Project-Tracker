@@ -69,6 +69,8 @@ Route::post('add-project', 'ProjectsController@addProject');
 Route::get('get-all-project-details', 'ProjectsController@getAllProjectDetails');
 // Edit Project Date(s)
 Route::get('edit-project-date', 'ProjectsController@editProjectDate');
+// Edit Project Status
+Route::get('edit-project-status', 'ProjectsController@editProjectStatus');
 // Add Scope of Work to project
 Route::get('add-scope-of-work/{project_id}/{project_code}', 'ProjectsController@addScopeOfWork');
 // Update Scope of Work list on a project
