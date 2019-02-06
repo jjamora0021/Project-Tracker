@@ -269,10 +269,10 @@
                                                 <td id="row-description-1"></td>
                                                 <td id="row-unit-1" class="text-uppercase text-center"></td>
                                                 <td class="text-center">
-                                                    <input type="text" class="form-control text-center" name="row[1][quantity]" id="row-quantity-1" value="0" required onkeyup="calculateTotalPrice('row-1',1);">
+                                                    <input type="text" class="form-control text-center allow_decimal" name="row[1][quantity]" id="row-quantity-1" value="0" required onkeyup="calculateTotalPrice('row-1',1);">
                                                 </td>
                                                 <td class="text-center">
-                                                    <input type="text" class="form-control text-center" name="row[1][price]" id="row-price-1" value="0" required onkeyup="calculateTotalPrice('row-1',1);">
+                                                    <input type="text" class="form-control text-center allow_decimal" name="row[1][price]" id="row-price-1" value="0" required onkeyup="calculateTotalPrice('row-1',1);">
                                                 </td>
                                                 <td class="text-center" id="td-row-total-1">0</td>
                                                 <input class="total-price" type="hidden" value="0" name="row[1][total]" id="row-total-1">
@@ -534,10 +534,10 @@
                             <td id="row-description-'+ctr+'"></td>\
                             <td id="row-unit-'+ctr+'" class="text-uppercase text-center"></td>\
                             <td class="text-center">\
-                                <input type="text" class="form-control text-center" name="row['+ctr+'][quantity]" id="row-quantity-'+ctr+'" value="0" required onkeyup="'+onBlur+'">\
+                                <input type="text" class="form-control text-center allow_decimal" name="row['+ctr+'][quantity]" id="row-quantity-'+ctr+'" value="0" required onkeyup="'+onBlur+'">\
                             </td>\
                             <td class="text-center">\
-                                <input type="text" class="form-control text-center" name="row['+ctr+'][price]" id="row-price-'+ctr+'" value="0" required onkeyup="'+onBlur+'">\
+                                <input type="text" class="form-control text-center allow_decimal" name="row['+ctr+'][price]" id="row-price-'+ctr+'" value="0" required onkeyup="'+onBlur+'">\
                             </td>\
                             <td class="text-center" id="td-row-total-'+ctr+'">0</td>\
                             <input type="hidden" class="total-price" value="0" name="row['+ctr+'][total]" id="row-total-'+ctr+'">\
@@ -559,8 +559,8 @@
     // Calculate Total Price
     function calculateTotalPrice(row_id, ctr)
     {
-        var qty = parseInt($.trim($('#'+row_id+' #row-quantity-'+ctr).val()));
-        var price = parseInt($.trim($('#'+row_id+' #row-price-'+ctr).val()));
+        var qty = parseFloat($.trim($('#'+row_id+' #row-quantity-'+ctr).val()));
+        var price = parseFloat($.trim($('#'+row_id+' #row-price-'+ctr).val()));
         var row_total_price = qty * price;
 
         $('#row-total-'+ctr).val(row_total_price);
@@ -572,7 +572,7 @@
     {
         var grand_total = 0;
         $.each($('.total-price'), function(index, el) {
-            grand_total += parseInt(el.value);
+            grand_total += parseFloat(el.value);
         });
         $('#grand-total').empty().text(grand_total.toLocaleString());
         $('#grand_total_cost').val(grand_total);
@@ -968,6 +968,15 @@
             console.log("error");
         });
     }
+
+    $(".allow_decimal").on("input", function(evt) {
+       var self = $(this);
+       self.val(self.val().replace(/[^0-9\.]/g, ''));
+       if ((evt.which != 46 || self.val().indexOf('.') != -1) && (evt.which < 48 || evt.which > 57)) 
+       {
+         evt.preventDefault();
+       }
+     });
 </script>
 
 @endsection

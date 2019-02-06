@@ -15,9 +15,11 @@
                         <h2>Add Project</h2>
                     </div>
                     <div class="col-md-6 pt-2 text-right">
-                        <button class="btn btn-warning btn-sm float-right ml-2 font-12 font-weight-bold">
-                            <i class="fas fa-undo-alt"></i> Back
-                        </button>
+                        <a href="{{ url('projects') }}">
+                            <button class="btn btn-warning btn-sm float-right ml-2 font-12 font-weight-bold">
+                                <i class="fas fa-undo-alt"></i> Back
+                            </button>
+                        </a>
                     </div>
                 </div>
                 <div class="card mb-3">
@@ -117,10 +119,10 @@
                                                     <td id="row-description-{{ $key }}"></td>
                                                     <td id="row-unit-{{ $key }}" class="text-uppercase text-center"></td>
                                                     <td class="text-center">
-                                                        <input type="text" class="form-control text-center" name="row[{{ $key }}][quantity]" id="row-quantity-{{ $key }}" value="{{ $value['quantity'] }}" readonly>
+                                                        <input type="text" class="form-control text-center allow_decimal" name="row[{{ $key }}][quantity]" id="row-quantity-{{ $key }}" value="{{ $value['quantity'] }}" readonly>
                                                     </td>
                                                     <td class="text-center">
-                                                        <input type="text" class="form-control text-center" name="row[{{ $key }}][price]" id="row-price-{{ $key }}" value="{{ $value['price'] }}" readonly>
+                                                        <input type="text" class="form-control text-cente allow_decimalr" name="row[{{ $key }}][price]" id="row-price-{{ $key }}" value="{{ $value['price'] }}" readonly>
                                                     </td>
                                                     <td class="text-center" id="td-row-total-{{ $key }}">{{ number_format($value['total']) }}</td>
                                                     <input class="total-price" type="hidden" value="{{ $value['total'] }}" name="row[{{ $key }}][total]" id="row-total-{{ $key }}">
@@ -216,10 +218,10 @@
                             <td id="row-description-'+ctr+'"></td>\
                             <td id="row-unit-'+ctr+'" class="text-uppercase text-center"></td>\
                             <td class="text-center">\
-                                <input type="text" class="form-control text-center" name="row['+ctr+'][quantity]" id="row-quantity-'+ctr+'" value="" required onkeyup="'+onBlur+'">\
+                                <input type="text" class="form-control text-center allow_decimal" name="row['+ctr+'][quantity]" id="row-quantity-'+ctr+'" value="" required onkeyup="'+onBlur+'">\
                             </td>\
                             <td class="text-center">\
-                                <input type="text" class="form-control text-center" name="row['+ctr+'][price]" id="row-price-'+ctr+'" value="" required onkeyup="'+onBlur+'">\
+                                <input type="text" class="form-control text-center allow_decimal" name="row['+ctr+'][price]" id="row-price-'+ctr+'" value="" required onkeyup="'+onBlur+'">\
                             </td>\
                             <td class="text-center" id="td-row-total-'+ctr+'">0</td>\
                             <input type="hidden" class="total-price" value="" name="row['+ctr+'][total]" id="row-total-'+ctr+'">\
@@ -241,8 +243,8 @@
     // Calculate Total Price
     function calculateTotalPrice(row_id, ctr)
     {
-        var qty = parseInt($.trim($('#'+row_id+' #row-quantity-'+ctr).val()));
-        var price = parseInt($.trim($('#'+row_id+' #row-price-'+ctr).val()));
+        var qty = parseFloat($.trim($('#'+row_id+' #row-quantity-'+ctr).val()));
+        var price = parseFloat($.trim($('#'+row_id+' #row-price-'+ctr).val()));
         var row_total_price = qty * price;
 
         $('#row-total-'+ctr).val(row_total_price);
@@ -254,7 +256,7 @@
     {
         var grand_total = 0;
         $.each($('.total-price'), function(index, el) {
-            grand_total += parseInt(el.value);
+            grand_total += parseFloat(el.value);
         });
         $('#grand-total').empty().text(grand_total.toLocaleString());
         $('#grand_total_cost').val(grand_total);
@@ -296,6 +298,15 @@
     function hasValue(obj, key, value) {
         return obj.hasOwnProperty(key) && obj[key] === value;
     }
+
+    $(".allow_decimal").on("input", function(evt) {
+       var self = $(this);
+       self.val(self.val().replace(/[^0-9\.]/g, ''));
+       if ((evt.which != 46 || self.val().indexOf('.') != -1) && (evt.which < 48 || evt.which > 57)) 
+       {
+         evt.preventDefault();
+       }
+    });
 </script>
 
 @endsection
