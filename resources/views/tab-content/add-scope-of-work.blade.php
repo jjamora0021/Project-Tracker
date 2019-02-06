@@ -12,7 +12,7 @@
             <div id="add-project-container" class="container-fluid">
                 <div class="col-md-12 page-header-container mb-2">
                     <div class="col-md-6 p-0">
-                        <h2>Add Project</h2>
+                        <h2>Add Scope Of Work</h2>
                     </div>
                     <div class="col-md-6 pt-2 text-right">
                         <a href="{{ url('projects') }}">
