@@ -112,10 +112,10 @@ class ProjectsController extends Controller
         $total_qty = 0;
         foreach ($request['row'] as $key => $value) {
             $boq_details[$key]['controlnumber'] = $value['controlnumber'];
-            $boq_details[$key]['quantity'] = (int)$value['quantity'];
-            $boq_details[$key]['price'] = (int)$value['price'];
-            $boq_details[$key]['total'] = (int)$value['total'];
-            $total_qty += (int)$value['quantity'];
+            $boq_details[$key]['quantity'] = number_format($value['quantity'], 2, '.', '');
+            $boq_details[$key]['price'] = number_format($value['price'], 2, '.', '');
+            $boq_details[$key]['total'] = number_format($value['total'], 2, '.', '');
+            $total_qty += number_format($value['quantity'], 2, '.', '');
         }
         
         $data = array(
@@ -342,10 +342,10 @@ class ProjectsController extends Controller
         $total_qty = 0;
         foreach ($request['row'] as $key => $value) {
             $boq_details[$key]['controlnumber'] = $value['controlnumber'];
-            $boq_details[$key]['quantity'] = (int)$value['quantity'];
-            $boq_details[$key]['price'] = (int)$value['price'];
-            $boq_details[$key]['total'] = (int)$value['total'];
-            $total_qty += (int)$value['quantity'];
+            $boq_details[$key]['quantity'] = number_format($value['quantity'], 2, '.', '');
+            $boq_details[$key]['price'] = number_format($value['price'], 2, '.', '');
+            $boq_details[$key]['total'] = number_format($value['total'], 2, '.', '');
+            $total_qty += number_format($value['quantity'], 2, '.', '');
         }
         
         $data = array(

@@ -124,7 +124,7 @@
                                                     <td class="text-center">
                                                         <input type="text" class="form-control text-cente allow_decimalr" name="row[{{ $key }}][price]" id="row-price-{{ $key }}" value="{{ $value['price'] }}" readonly>
                                                     </td>
-                                                    <td class="text-center" id="td-row-total-{{ $key }}">{{ number_format($value['total']) }}</td>
+                                                    <td class="text-center" id="td-row-total-{{ $key }}">{{ number_format($value['total'], 2, '.', '') }}</td>
                                                     <input class="total-price" type="hidden" value="{{ $value['total'] }}" name="row[{{ $key }}][total]" id="row-total-{{ $key }}">
                                                     <td>
                                                         <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" title="Add row" onclick="addRow({{ $key }});"><i class="fas fa-plus"></i></button>
