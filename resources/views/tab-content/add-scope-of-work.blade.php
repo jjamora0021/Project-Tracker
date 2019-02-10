@@ -63,7 +63,7 @@
 
                         <div class="row mb-3">
                             <!-- Project Code -->
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-3">
                                 <label>Project Code: </label>
                                 <input class="form-control" name="project_code" id="project-code" value="{{ $project_details['project_code'] }}" disabled>
                                 @if ($errors->has('project_code'))
@@ -72,7 +72,7 @@
                             </div>
 
                             <!-- Work Order -->
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-3">
                                 <label>Work Order #: </label>
                                 <input type="text" class="form-control" name="work_order_number" id="work-order-number" value="{{ $project_details['work_order_number'] }}" disabled>
                                 @if ($errors->has('work_order_number'))
@@ -81,12 +81,24 @@
                             </div>
 
                             <!-- Materials Reference Number -->
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-3">
                                 <label>CCID: </label>
                                 <input type="text" class="form-control" name="ccid" id="ccid" value="{{ $project_details['ccid'] }}" disabled>
                                 @if ($errors->has('ccid'))
                                     <div class="alert alert-danger mt-2 font-weight-bold">{{ $errors->first('ccid') }} Please dont leave this blank or with just only white spaces.</div>
                                 @endif
+                            </div>
+
+                            <!-- Project Status -->
+                            <div class="form-group col-md-3">
+                                <label>Status: </label>
+                                <select class="custom-select form-control" id="project-status" name="status" disabled>
+                                    @foreach(Config::get('status') as $key => $value)
+                                        @if($project_details['status'] == $key)
+                                            <option value="{{ $key }}" selected>{{ $value }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <form action="{{ url('add-scope-of-work-to-project') }}" method="POST">

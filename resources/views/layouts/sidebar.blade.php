@@ -17,7 +17,7 @@
    <li class="nav-item" id="locations">
         <a class="nav-link" href="{{ url('locations') }}">
             <i class="fas fa-globe-asia"></i>
-            <span>Locations</span>
+            <span>Project Locations</span>
         </a>
     </li>
     <li class="nav-item" id="projects">

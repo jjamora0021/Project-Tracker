@@ -112,3 +112,9 @@ Route::get('delete-bom', 'BOMManagementController@deleteBOM');
 Route::get('logs', 'LogsController@index');
 // Get Log Details
 Route::get('get-log-details', 'LogsController@getLogDetails');
+
+/**
+ * Warehouse Location
+ */
+
+// Load All Warehouse Locations
