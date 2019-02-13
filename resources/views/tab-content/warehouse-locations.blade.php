@@ -28,7 +28,7 @@
                 <div class="card mb-2">
                     <div class="card-body">
                         <div class="container">
-                            <table class="table table-bordered" cellspacing="0" style="width:100%">
+                            <table class="table table-bordered" id="bom-table" cellspacing="0" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th hidden>ID</th>
@@ -166,7 +166,9 @@
 
     function InitiateTable()
     {
-        $('.table').DataTable();
+        $('#bom-table').DataTable({
+            "order": [[ 2, "asc" ]],
+        });
     }
 
     function openUpdateWarehouseLocationModal(id, location, area_code)

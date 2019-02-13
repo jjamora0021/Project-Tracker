@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\CCIDManagementModel;
+use App\WareHouseLocationModel;
 use App\LogsModel;
 
 use Carbon\Carbon;
@@ -15,6 +16,7 @@ use Session;
 class CCIDManagementController extends Controller
 {
     protected $CCIDManagementModel;
+    protected $WareHouseLocationModel;
     protected $LogsModel;
 
     /**
@@ -26,12 +28,15 @@ class CCIDManagementController extends Controller
     {
         $this->middleware('auth');
         $this->CCIDManagementModel = new \App\CCIDManagementModel;
+        $this->WareHouseLocationModel = new \App\WareHouseLocationModel;
         $this->LogsModel = new \App\LogsModel;
     }
 
     public function index()
     {
     	$user_data = Session::get('user')[0];
-    	return view('tab-content.ccid-management', compact('user_data'));
+        $warehouselocations = $this->WareHouseLocationModel->getAllWarehouseLocation();
+        $ccid = [];
+    	return view('tab-content.ccid-management', compact('user_data','ccid','warehouselocations'));
     }
 }

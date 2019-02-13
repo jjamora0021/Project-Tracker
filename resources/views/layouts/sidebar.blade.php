@@ -44,10 +44,10 @@
             <span>BOM Management</span>
         </a>
     </li>
-    <!-- <li class="nav-item" id="ccid-management">
+    <li class="nav-item" id="ccid-management">
         <a class="nav-link" href="{{ url('ccid-management') }}">
             <i class="fas fa-file-signature"></i>
             <span>CCID Management</span>
         </a>
-    </li> -->
+    </li>
 </ul>

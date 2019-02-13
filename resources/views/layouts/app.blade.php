@@ -92,6 +92,11 @@
                 format: 'yyyy/mm/dd',
                 defaultViewDate: { year: currentYear }
             });
+            $('#pickup-date').datepicker({
+                uiLibrary: 'bootstrap4',
+                format: 'yyyy/mm/dd',
+                defaultViewDate: { year: currentYear }
+            });
         }
     </script>
 </body>

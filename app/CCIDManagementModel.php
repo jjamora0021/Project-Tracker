@@ -11,7 +11,7 @@ class CCIDManagementModel extends Model
      *
      * @var string
      */
-    protected $table = 'ccid';
+    protected $table = 'c_c_i_d';
 
     // Convert Objects to Array
     public function objectToArray($data)
