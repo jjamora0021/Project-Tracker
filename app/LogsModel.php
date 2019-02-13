@@ -229,4 +229,64 @@ class LogsModel extends Model
                 'updated_at' => $timestamp
             ]);
     }
+
+
+    /********************** Warehouse Location **********************/
+    // Create Add Warehouse Location Logs
+    public function createAddWarehouseLocationLog($user_data, $timestamp, $details)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Added Warehouse Location',
+                'project_code' => NULL,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
+
+    // Create Update Warehouse Location Logs
+    public function createUpdateWarehouseLocationLog($user_data, $timestamp, $details)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Updated Warehouse Location',
+                'project_code' => NULL,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
+
+    // Create Delete Warehouse Location Logs
+    public function createDeleteWarehouseLocationLog($user_data, $timestamp, $details)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Deleted Warehouse Location',
+                'project_code' => NULL,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
+
+
+    /********************** Daily Progress Remarks **********************/
+    // Create Daily Progress Remarks Logs
+    public function createDailyProgressRemarksLog($user_data, $timestamp, $details, $project_code)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Add Progress Remarks on Project',
+                'project_code' => $project_code,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
 }

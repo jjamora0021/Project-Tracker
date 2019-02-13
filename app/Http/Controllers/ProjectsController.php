@@ -93,7 +93,6 @@ class ProjectsController extends Controller
                 }
                 $projects[$key]['boq_details'] = $boq;
             }
-            // dd($projects);
             return $projects;
         }
         else
@@ -409,5 +408,80 @@ class ProjectsController extends Controller
         {
             return view('tab-content.projects-location', compact('projects','user_data','location'));
         }
+    }
+
+    public function projectRemarks($id, $project_code)
+    {
+        $user_data = Session::get('user')[0];
+        $data = $this->ProjectsModel->getAllProjectDetails($id,$project_code);
+        if($data != false)
+        {
+            // calculate the timeframe in days of the project
+            $date_start = Carbon::parse($data['date_start']);
+            $date_end = Carbon::parse($data['date_end']);
+            $days = $date_start->diffInDays($date_end) + 1;
+            $date_range = $this->getDatesFromRange($date_start, $date_end);
+            $total_progress = 0;
+            
+            // convert BOQ details from object to array
+            $boq_details = $this->objectToArray(json_decode($data['boq_details']));
+            // converts Quantity, Price and Total from String to Integer
+            foreach ($boq_details as $key => $value) {
+                $boq_details[$key]['controlnumber'] = $value['controlnumber'];
+                // get boq description
+                $boq_description = $this->BOQModel->getBoqDetails($value['controlnumber']);
+                $boq_details[$key]['boq_description'] = $boq_description['description'];
+
+                $boq_details[$key]['quantity'] = (int)$value['quantity'];
+                $boq_details[$key]['price'] = (int)$value['price'];
+                $boq_details[$key]['total'] = (int)$value['total'];
+                
+                $daily_progress = $this->DailyProgressModel->getDailyProgress($id,$project_code,$value['controlnumber']);
+                
+                if($daily_progress != false)
+                {
+                    $boq_details[$key]['progress'] = $this->objectToArray(json_decode($daily_progress[0]['progress']));
+                    $total_progress += $this->objectToArray(json_decode($daily_progress[0]['total_progress'])); 
+                }
+                else
+                {
+                    $boq_details[$key]['progress'] = [];
+                }
+            }
+            // Get CTRL Number and Desciption
+            $data['boq_details'] = $boq_details;
+            $data['number_of_days'] = $days;
+            $data['date_range'] = $date_range;
+            $data['total_progress'] = $total_progress;
+            
+            foreach ($data['boq_details'] as $key => $value) {
+                $boq_total_progress = 0;
+                foreach ($value['progress'] as $idx => $val) {
+                    $boq_total_progress += (int)$val;
+                }
+                $data['boq_details'][$key]['boq_total_progress'] = $boq_total_progress;
+            }
+        }
+
+        $result =  DB::table('daily_progress_remarks')
+                        ->where('project_id', $id)
+                        ->where('project_code', $project_code)
+                        ->get()
+                        ->toArray();
+        $remarks = [];
+        foreach ($result as $key => $value) {
+            $remarks[] = $this->objectToArray($value);
+        }
+
+        foreach ($data['boq_details'] as $key => $value) {
+            foreach ($remarks as $idx => $val) {
+                if($value['controlnumber'] == $val['boq_control_number'])
+                {
+                    $data['boq_details'][$key]['remarks'] = $this->objectToArray(json_decode($val['remarks']));
+                }
+            }
+        }
+
+        return view('tab-content.remarks', compact('user_data','data'));
     }
 }

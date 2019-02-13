@@ -77,6 +77,8 @@ Route::get('add-scope-of-work/{project_id}/{project_code}', 'ProjectsController@
 Route::post('add-scope-of-work-to-project', 'ProjectsController@updateScopeOfWorkList');
 // Load Projects on a specified Location
 Route::get('projects/{location}', 'ProjectsController@loadLocationProjects');
+// Load Remarks Page of Porject
+Route::get('project-remarks/{project_id}/{project_code}', 'ProjectsController@projectRemarks');
 
 /**
  * Daily Progress
@@ -88,6 +90,9 @@ Route::get('save-daily-progress', 'DailyProgressController@saveDailyProgress');
 Route::get('request-to-update-progress', 'DailyProgressController@requestToUpdateProgress');
 // Approve Request to Update Progress
 Route::get('approve-to-update-progress', 'DailyProgressController@approveRequestToUpdateProgress');
+
+// Save Progess Remarks
+Route::get('save-daily-progress-remarks', 'DailyProgressRemarksController@saveDailyProgressRemarks');
 
 /**
  * BOM Management
@@ -118,3 +123,17 @@ Route::get('get-log-details', 'LogsController@getLogDetails');
  */
 
 // Load All Warehouse Locations
+Route::get('warehouse-locations', 'WarehouseLocationController@index');
+// Add Warehouse Location
+Route::get('add-warehouse-location','WarehouseLocationController@addWarehouseLocation');
+// Update Warehouse Location
+Route::get('update-warehouse-location', 'WarehouseLocationController@updateWarehouseLocation');
+// Delete Warehouse Location
+Route::get('delete-warehouse-location', 'WarehouseLocationController@deleteWarehouseLocation');
+
+/**
+ * CCID Management
+ */
+
+// Load CCID Management Page
+Route::get('ccid-management', 'CCIDManagementController@index');

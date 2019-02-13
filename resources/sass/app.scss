@@ -147,10 +147,14 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:before
   content: "" !important;
 }
 
+table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, table.dataTable thead>tr>td.sorting_desc, table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>th.sorting_asc, table.dataTable thead>tr>th.sorting_desc {
+  padding-right: 10px !important;
+}
+
 .table td, .table th {
-    padding: .75rem;
-    vertical-align: middle !important;
-    border-top: 1px solid #dee2e6;
+  padding: .75rem;
+  vertical-align: middle !important;
+  border-top: 1px solid #dee2e6;
 }
     
 // Vertically Align Modal
@@ -222,7 +226,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:before
   color:blue;
 }
 
-#daily-progress-table {
+#daily-progress-table, #daily-progress-remarks-table {
   overflow: scroll;
   width: 100%;
   thead {
@@ -268,4 +272,9 @@ table.dataTable.table-striped.DTFC_Cloned tbody tr:nth-of-type(even) {
   position: relative;
   top:50%;
   left:50%;
+}
+
+.has-value {
+  background: #d2e9ff !important;
+  border: 1px solid #fff !important;
 }

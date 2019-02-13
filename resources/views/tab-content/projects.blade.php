@@ -52,11 +52,12 @@
                                         <th>Location</th>
                                         <th class="text-center">CCID</th>
                                         <th class="text-center">Work Order Number</th>
-                                        <th class="text-center">Start Date</th>
-                                        <th class="text-center">End Date</th>
+                                        <th class="text-center" style="min-width: 100px;">Start Date</th>
+                                        <th class="text-center" style="min-width: 100px;">End Date</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">Total Percentage</th>
-                                        <th class="text-center" id="actions">Actions</th>
+                                        <th class="text-center" style="min-width: 100px;">Remarks</th>
+                                        <th class="text-center" id="actions" style="min-width: 170px;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -93,9 +94,14 @@
                                                 @endforeach
 
                                                 <td class="text-center">{{ (int)$total_progress }}%</td>
+                                                @if($value['remarks'] == NULL)
+                                                    <td class="text-center">No Remarks</td>
+                                                @else
+                                                    <td class="text-center"><a href="{{ url('project-remarks') }}/{{ $value['id'] }}/{{ $value['project_code'] }}"><button class="btn btn-sm btn-info"><i class="fas fa-comments"></i>  Remarks</button></a></td>
+                                                @endif
                                                 <td class="text-center">
-                                                    <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['site_name'] }} Progress" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}','{{ $days }}');"><i class="fas fa-edit"></i></button>
-                                                    <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['site_name'] }}" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}');"><i class="fas fa-trash-alt"></i></button>
+                                                    <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['site_name'] }} Progress" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}','{{ $days }}');"><i class="fas fa-edit"></i> Update</button>
+                                                    <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['site_name'] }}" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}');"><i class="fas fa-trash-alt"></i> Delete</button>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -131,9 +137,14 @@
                                 <h4 class="mb-3"><i class="fas fa-tasks"></i> Daily Progress</h4>
                             </div>
                             <div class="col-md-6 pt-2 text-right pr-0" id="add-scope-of-work-btn-container">
-                                <a href="">
+                                <a href="" id="add-scope">
                                     <button class="btn btn-primary btn-sm float-right ml-2 font-12 font-weight-bold">
                                         <i class="fas fa-plus"></i> Add Scope of Work
+                                    </button>
+                                </a>
+                                <a href="" id="add-remarks">
+                                    <button class="btn btn-info btn-sm float-right ml-2 font-12 font-weight-bold" id="remarks-btn">
+                                        <i class="fas fa-comments"></i> Remarks
                                     </button>
                                 </a>
                             </div>
@@ -141,7 +152,7 @@
                         <div class="ajax-loader">
                             <img src="{{ url('images/Spinner-1.gif') }}" class="img-responsive" />
                         </div>
-                        <small><strong>Note: <span class="text-danger">Double click on the space below the day number to input updates.</span></strong></small>
+                        <small><strong>Note: <span class="text-danger">Double click on the space below the day number to input updates. Quantity updates only. If there are remarks, input them on the remarks section.</span></strong></small>
                         <table class="table table-striped table-bordered" id="daily-progress-table" cellspacing="0" width="100%">
                         </table>
                     </div>
@@ -297,190 +308,189 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <!-- BOQ Modal -->
-            <div class="modal" tabindex="-1" role="dialog" id="boq-modal">
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">BOQ Selection</h5>
+<!-- BOQ Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="boq-modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">BOQ Selection</h5>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="row-number" value="">
+                <table class="table table-bordered" cellspacing="0" id="boq-selection" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th hidden>ID</th>
+                            <th width="10%" id="control-number">Control Number</th>
+                            <th width="60%" id="description">Description</th>
+                            <th width="10%" class="text-center" id="unit">Unit</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(!empty($boqs))
+                            @foreach($boqs as $key => $value)
+                                <tr>
+                                    <td hidden="">{{ $value['id'] }}</td>
+                                    <td>{{ $value['control_number'] }}</td>
+                                    <td>{{ $value['description'] }}</td>
+                                    <td class="text-center text-uppercase">{{ $value['unit'] }}</td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="selectBOQ(<?php echo $value['control_number']; ?>);" data-dismiss="modal">Select</button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Progress Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="add-progress-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="day-number"></h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="col-md-12" id="add-progress-form-container">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="project-id" value="">
+                                <input type="hidden" id="project-code" value="">
+                                <input type="hidden" id="boq-control-number" value="">
+                                <input type="hidden" id="day-num" value="">
+                                <input type="number" tabindex="1" id="progress" value="" class="form-control" placeholder="Enter progress">
+                            </div>
+                            <div class="col-md-6 text-right p-1">
+                                <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="saveProgress();">Save</button> 
+                                <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
+                            </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                        <div class="modal-body">
-                            <input type="hidden" id="row-number" value="">
-                            <table class="table table-bordered" cellspacing="0" id="boq-selection" style="width:100%">
-                                <thead>
-                                    <tr>
-                                        <th hidden>ID</th>
-                                        <th width="10%" id="control-number">Control Number</th>
-                                        <th width="60%" id="description">Description</th>
-                                        <th width="10%" class="text-center" id="unit">Unit</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if(!empty($boqs))
-                                        @foreach($boqs as $key => $value)
-                                            <tr>
-                                                <td hidden="">{{ $value['id'] }}</td>
-                                                <td>{{ $value['control_number'] }}</td>
-                                                <td>{{ $value['description'] }}</td>
-                                                <td class="text-center text-uppercase">{{ $value['unit'] }}</td>
-                                                <td class="text-center">
-                                                    <button type="button" class="btn btn-sm btn-primary" onclick="selectBOQ(<?php echo $value['control_number']; ?>);" data-dismiss="modal">Select</button>
-                                                </td>
-                                            </tr>
+<!-- Update Progress Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="update-progress-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="day-number"></h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="col-md-12" id="update-progress-form-container">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="hidden" id="project-id" value="">
+                                <input type="hidden" id="project-code" value="">
+                                <input type="hidden" id="boq-control-number" value="">
+                                <input type="hidden" id="day-num" value="">
+                                <div class="form-group col-md-4 p-0">
+                                    <label for="usr">Current Progress:</label>
+                                    <input type="number" tabindex="1" id="progress" value="" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="comment">Comment:</label>
+                                    <textarea class="form-control" rows="3" id="comment"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12 text-right pr-3">
+                                <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="requestForUpdateProgress();">Update</button> 
+                                <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Project Date -->
+<div class="modal" tabindex="-1" role="dialog" id="edit-project-date-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="edit-date-header"></h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="project-id" value="">
+                                <input type="hidden" id="project-code" value="">
+                                <input type="hidden" id="db-field" value="">
+                                <input type="hidden" id="date-type" value="">
+                                <input class="datepicker" data-date-format="mm/dd/yyyy" id="edit-date">
+                            </div>
+                            <div class="col-md-6 text-right p-1">
+                                <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="updateProjectDate();">Update</button> 
+                                <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Project Status -->
+<div class="modal" tabindex="-1" role="dialog" id="edit-project-status-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="edit-status-header">Edit Project Status</h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" id="project-id" value="">
+                                <input type="hidden" id="project-code" value="">
+                                <input type="hidden" id="db-field" value="">
+                                <div class="form-inline">
+                                    <label>Status: </label>
+                                    <select class="custom-select form-control" id="project-status" name="status" required>
+                                        <option selected>Select Status</option>
+                                        @foreach(Config::get('status') as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
                                         @endforeach
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Add Progress Modal -->
-            <div class="modal" tabindex="-1" role="dialog" id="add-progress-modal">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="day-number"></h5>
-                        </div>
-
-                        <div class="modal-body">
-                            <div class="col-md-12" id="add-progress-form-container">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <input type="hidden" id="project-id" value="">
-                                            <input type="hidden" id="project-code" value="">
-                                            <input type="hidden" id="boq-control-number" value="">
-                                            <input type="hidden" id="day-num" value="">
-                                            <input type="number" tabindex="1" id="progress" value="" class="form-control" placeholder="Enter progress">
-                                        </div>
-                                        <div class="col-md-6 text-right p-1">
-                                            <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="saveProgress();">Save</button> 
-                                            <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
-                                        </div>
-                                    </div>
+                                    </select>
                                 </div>
+                            </div>
+                            <div class="col-md-6 text-right" style="padding-top: 30px !important;">
+                                <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="updateProjectStatus();">Update</button> 
+                                <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Update Progress Modal -->
-            <div class="modal" tabindex="-1" role="dialog" id="update-progress-modal">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="day-number"></h5>
-                        </div>
-
-                        <div class="modal-body">
-                            <div class="col-md-12" id="update-progress-form-container">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <input type="hidden" id="project-id" value="">
-                                            <input type="hidden" id="project-code" value="">
-                                            <input type="hidden" id="boq-control-number" value="">
-                                            <input type="hidden" id="day-num" value="">
-                                            <div class="form-group col-md-4 p-0">
-                                                <label for="usr">Current Progress:</label>
-                                                <input type="number" tabindex="1" id="progress" value="" class="form-control">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="comment">Comment:</label>
-                                                <textarea class="form-control" rows="3" id="comment"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12 text-right pr-3">
-                                            <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="requestForUpdateProgress();">Update</button> 
-                                            <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Edit Project Date -->
-            <div class="modal" tabindex="-1" role="dialog" id="edit-project-date-modal">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="edit-date-header"></h5>
-                        </div>
-
-                        <div class="modal-body">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <input type="hidden" id="project-id" value="">
-                                            <input type="hidden" id="project-code" value="">
-                                            <input type="hidden" id="db-field" value="">
-                                            <input type="hidden" id="date-type" value="">
-                                            <input class="datepicker" data-date-format="mm/dd/yyyy" id="edit-date">
-                                        </div>
-                                        <div class="col-md-6 text-right p-1">
-                                            <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="updateProjectDate();">Update</button> 
-                                            <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Edit Project Status -->
-            <div class="modal" tabindex="-1" role="dialog" id="edit-project-status-modal">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="edit-status-header">Edit Project Status</h5>
-                        </div>
-
-                        <div class="modal-body">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <input type="hidden" id="project-id" value="">
-                                            <input type="hidden" id="project-code" value="">
-                                            <input type="hidden" id="db-field" value="">
-                                            <div class="form-inline">
-                                                <label>Status: </label>
-                                                <select class="custom-select form-control" id="project-status" name="status" required>
-                                                    <option selected>Select Status</option>
-                                                    @foreach(Config::get('status') as $key => $value)
-                                                        <option value="{{ $key }}">{{ $value }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 text-right" style="padding-top: 30px !important;">
-                                            <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="updateProjectStatus();">Update</button> 
-                                            <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
@@ -629,8 +639,10 @@
             },
         })
         .done(function(result) {
-            console.log(result)
-            $('#view-daily-progress-container #add-scope-of-work-btn-container a').attr('href',"{{ url('add-scope-of-work') }}/"+id+"/"+project_code);
+            $('#view-daily-progress-container #add-scope-of-work-btn-container #add-scope').attr('href',"{{ url('add-scope-of-work') }}/"+id+"/"+project_code);
+            $('#view-daily-progress-container #add-scope-of-work-btn-container #add-remarks').attr('href',"{{ url('project-remarks') }}/"+id+"/"+project_code);
+            var open_remarks_modal = "openRemarksModal("+id+",'"+project_code+"');"
+            $('#view-daily-progress-container #add-scope-of-work-btn-container #remarks-btn').attr('onclick',open_remarks_modal);
             var table = $('#daily-progress-table');
             table.empty();
             var initalTable = '<thead>\
@@ -652,7 +664,7 @@
             var table_body = $('#daily-progress-table tbody');
             // add days on header
             for (var i = 1; i < result['number_of_days'] + 1; i++) {
-                table_header.append('<th class="text-center">Day '+i+' ('+result['date_range'][i - 1]+')</th>');
+                table_header.append('<th class="text-center">Day '+i+' <br> ('+result['date_range'][i - 1]+')</th>');
             }
 
             table_header.append('<th class="text-center">Total</th>');
@@ -673,7 +685,7 @@
                     }
                     else
                     {
-                        blank_tds+='<td ondblclick="'+addProgress+'" id="td-'+i+'" class="text-center day-progress">0</td>';   
+                        blank_tds+='<td ondblclick="'+addProgress+'" id="td-'+i+'" class="text-center clickable day-progress">0</td>';   
                     }
                 }
                 table_body.append('<tr id="'+value['controlnumber']+'"><td>'+ctr_num+'<br>'+description+'</td><td class="text-center">'+as_plan_boq+'</td>'+blank_tds+'</tr>');
@@ -977,6 +989,11 @@
          evt.preventDefault();
        }
      });
+
+    function viewRemarks(id)
+    {
+
+    }
 </script>
 
 @endsection
