@@ -4980,5 +4980,11 @@ class BoqTableSeeder extends Seeder
 		'description'=>'DD Plan: Cable Entrance Facilities (per building), includes at least Isometric drawing, site vicinity location plan, floor plan, BOQ',
 		'unit'=>'each'
 		] );
+
+		DB::table('bom')->insert( [
+		'control_number'=>10110,
+		'description'=>'Pole, Concrete 9.0m',
+		'unit'=>'pc/s'
+		] );
     }
 }
