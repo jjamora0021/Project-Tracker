@@ -120,7 +120,7 @@ class BOQManagementController extends Controller
             'unit' => $request['unit']
         ];
 
-        $result = $this->BOMModel->updateBOQDetails($data);
+        $result = $this->BOQModel->updateBOQDetails($data);
         $details = [
             'user' => $user_data['username'],
             'timestamp' => $now,
@@ -130,7 +130,7 @@ class BOQManagementController extends Controller
 
         if($result == true)
         {
-            $response = ['result' => true, 'bom' => $this->BOQModel->getBOQs()];
+            $response = ['result' => true, 'boq' => $this->BOQModel->getBOQs()];
             $details['result'] = 'success';
             $this->LogsModel->createUpdateBOQLog($user_data, $now, $details);
             return response()->json($response);
@@ -163,7 +163,7 @@ class BOQManagementController extends Controller
 
         if($result == true)
         {
-            $response = ['result' => true, 'bom' => $this->BOQModel->getBOQs()];
+            $response = ['result' => true, 'boq' => $this->BOQModel->getBOQs()];
             $details['result'] = 'success';
             $this->LogsModel->createDeleteBOQLog($user_data, $now, $details);
             return response()->json($response);
