@@ -29,7 +29,7 @@ class UsersTableSeeder extends Seeder
 	            'email' => 'erick0626@yahoo.com',
 	            'password' => bcrypt('g7i1g1zgeb6v'),
 	            'token' => str_random(40) . time(),
-	            'user_role' => 'staff',
+	            'user_role' => 'admin',
 	            'created_at' => $now,
 	            'updated_at' => $now
 	        ],
@@ -39,7 +39,7 @@ class UsersTableSeeder extends Seeder
 	            'email' => 'richelle.garalde@gmail.com',
 	            'password' => bcrypt('0407garalde'),
 	            'token' => str_random(40) . time(),
-	            'user_role' => 'staff',
+	            'user_role' => 'admin',
 	            'created_at' => $now,
 	            'updated_at' => $now
 	        ]
