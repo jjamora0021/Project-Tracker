@@ -24,10 +24,20 @@ class UsersTableSeeder extends Seeder
 	            'updated_at' => $now
         	],
 	        [
-	            'name' => 'Jeff Dino',
-	            'username' => 'jeffdino',
-	            'email' => 'jeffdino@example.com',
-	            'password' => bcrypt('password'),
+	            'name' => 'Erick Mendiola',
+	            'username' => 'erick0626',
+	            'email' => 'erick0626@yahoo.com',
+	            'password' => bcrypt('g7i1g1zgeb6v'),
+	            'token' => str_random(40) . time(),
+	            'user_role' => 'staff',
+	            'created_at' => $now,
+	            'updated_at' => $now
+	        ],
+	        [
+	            'name' => 'Richelle Garalde',
+	            'username' => 'richelle_g',
+	            'email' => 'richelle.garalde@gmail.com',
+	            'password' => bcrypt('0407garalde'),
 	            'token' => str_random(40) . time(),
 	            'user_role' => 'staff',
 	            'created_at' => $now,

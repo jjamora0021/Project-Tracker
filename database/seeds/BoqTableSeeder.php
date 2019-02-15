@@ -4981,7 +4981,7 @@ class BoqTableSeeder extends Seeder
 		'unit'=>'each'
 		] );
 
-		DB::table('bom')->insert( [
+		DB::table('boq')->insert( [
 		'control_number'=>10110,
 		'description'=>'Pole, Concrete 9.0m',
 		'unit'=>'pc/s'
