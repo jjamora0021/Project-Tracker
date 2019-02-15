@@ -9,14 +9,6 @@
     <div class="tab-content">
         <div class="alert alert-success text-center font-weight-bold d-none"></div>
         <div class="container text-center" id="alert-container">
-            @if(Session::has('success'))
-                <div class="alert alert-success text-center font-weight-bold">
-                    {{ Session::get('success') }}
-                    @php
-                    Session::forget('success');
-                    @endphp
-                </div>
-            @endif
              @if(Session::has('danger'))
                 <div class="alert alert-danger text-center font-weight-bold">
                     {{ Session::get('danger') }}
@@ -86,7 +78,7 @@
                                                     @endif
                                                 @endforeach
                                                 <?php $total_progress = ($total_progress / $value['total_project_qty']) * 100; ?>
-
+                                                
                                                 @foreach(Config::get('status') as $key => $stat)
                                                     @if($key == $value['status'])
                                                         <td class="text-center clickable" id="status_{{ $value['project_code'] }}" ondblclick="editStatus('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['status'] }}','status')">{{ $stat }}</td>
@@ -101,7 +93,7 @@
                                                 @endif
                                                 <td class="text-center">
                                                     <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['site_name'] }} Progress" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}','{{ $days }}');"><i class="fas fa-edit"></i> Update</button>
-                                                    <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['site_name'] }}" onclick="viewDailyProgress('{{ $value['id'] }}','{{ $value['project_code'] }}','{{ $value['site_name'] }}');"><i class="fas fa-trash-alt"></i> Delete</button>
+                                                    <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['site_name'] }}" onclick="openDeleteProjectModal('{{ $value['id'] }}','{{ $value['project_code'] }}');"><i class="fas fa-trash-alt"></i> Delete</button>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -490,6 +482,28 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Project -->
+<div class="modal" tabindex="-1" role="dialog" id="delete-project-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="edit-status-header">Delete Project</h5>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="project_id">
+                <input type="hidden" id="project_code">
+                <h5 class="text-danger">Are you sure you want to delete this project?</h5>
+            </div>
+
+            <div class="modal-footer text-right">
+                <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="deleteProject();">Delete</button> 
+                <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">Cancel</button> 
             </div>
         </div>
     </div>
@@ -990,9 +1004,38 @@
        }
      });
 
-    function viewRemarks(id)
+    function openDeleteProjectModal(id,project_code)
     {
+        $('#delete-project-modal').modal({keyboard:false,backdrop:"static"});
+        $('#delete-project-modal #project_id').val(id)
+        $('#delete-project-modal #project_code').val(project_code);
+    }
 
+    function deleteProject()
+    {
+        var id = $('#delete-project-modal #project_id').val();
+        var project_code = $('#delete-project-modal #project_code').val();
+
+        $.ajax({
+            url: "{{ url('delete-project') }}",
+            data: {
+                "id" : id,
+                "project_code" : project_code
+            },
+        })
+        .done(function(response) {
+            if(response == 'true')
+            {
+                location.reload();
+            }
+            else
+            {
+                alert('Something went wrong. Please Try again.');
+            }
+        })
+        .fail(function() {
+            console.log("error");
+        });
     }
 </script>
 

@@ -85,6 +85,8 @@ Route::post('add-scope-of-work-to-project', 'ProjectsController@updateScopeOfWor
 Route::get('projects/{location}', 'ProjectsController@loadLocationProjects');
 // Load Remarks Page of Porject
 Route::get('project-remarks/{project_id}/{project_code}', 'ProjectsController@projectRemarks');
+// Delete Project
+Route::get('delete-project','ProjectsController@deleteProject');
 
 /**
  * Daily Progress

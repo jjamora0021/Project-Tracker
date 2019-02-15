@@ -131,6 +131,19 @@ class LogsModel extends Model
             ]);
     }
 
+    public function createDeleteProjectLog($user_data, $timestamp, $details, $project_code)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Delete Project',
+                'project_code' => $project_code,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
+
     /********************** Daily Progress **********************/
     // Create Add Daily Progress Logs
     public function createDailyProgressLog($user_data, $timestamp, $details, $project_code)

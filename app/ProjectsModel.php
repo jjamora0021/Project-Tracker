@@ -140,4 +140,18 @@ class ProjectsModel extends Model
         $projects = ($this::where('location',$abbrv)->get())->toArray();
         return $projects;
     }
+
+    public function deleteProject($data)
+    {
+        $result = $this::where('id',$data['id'])->where('project_code',$data['project_code'])->delete();
+
+        if($result)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

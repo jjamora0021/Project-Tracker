@@ -127,7 +127,8 @@ class ProjectsController extends Controller
             'ccid' => $request['ccid'],
             'boq_details' => json_encode($boq_details),
             'total_project_cost' => $request['grand_total_cost'],
-            'total_project_qty' => $total_qty
+            'total_project_qty' => $total_qty,
+            'status' => $request['status']
         );
         
         $result = $this->ProjectsModel->addProject($data);
@@ -468,6 +469,7 @@ class ProjectsController extends Controller
                         ->where('project_code', $project_code)
                         ->get()
                         ->toArray();
+
         $remarks = [];
         foreach ($result as $key => $value) {
             $remarks[] = $this->objectToArray($value);
@@ -481,7 +483,39 @@ class ProjectsController extends Controller
                 }
             }
         }
-
+        
         return view('tab-content.remarks', compact('user_data','data'));
+    }
+
+    public function deleteProject(Request $request)
+    {
+        $user_data = Session::get('user')[0];
+        $now = Carbon::now();
+
+        $data = [
+            'id' => $request['id'],
+            'project_code' => $request['project_code']
+        ];
+
+        $delete = $this->ProjectsModel->deleteProject($data);
+
+        $details = [
+            'user' => $user_data['username'],
+            'timestamp' => $now,
+            'result' => 'null'
+        ];
+
+        if($delete != false)
+        {
+            $details['result'] = 'success';
+            $this->LogsModel->createDeleteProjectLog($user_data, $now, $details, $request['project_code']);
+            return 'true';
+        }
+        else
+        {
+            $details['result'] = 'failed';
+            $this->LogsModel->createDeleteProjectLog($user_data, $now, $details, $request['project_code']);
+            return 'false';
+        }
     }
 }
