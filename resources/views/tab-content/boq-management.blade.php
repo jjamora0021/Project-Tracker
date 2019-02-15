@@ -8,22 +8,8 @@
     <!-- Tab panes -->
     <div class="tab-content">
         <div class="container text-center">
-            @if(Session::has('success'))
-                <div class="alert alert-success text-center font-weight-bold">
-                    {{ Session::get('success') }}
-                    @php
-                    Session::forget('success');
-                    @endphp
-                </div>
-            @endif
-             @if(Session::has('danger'))
-                <div class="alert alert-danger text-center font-weight-bold">
-                    {{ Session::get('danger') }}
-                    @php
-                    Session::forget('danger');
-                    @endphp
-                </div>
-            @endif
+            <div class="alert alert-success text-center font-weight-bold d-none"></div>
+            <div class="alert alert-danger text-center font-weight-bold d-none"></div>
         </div>
         <div class="tab-pane active">
             <div class="container-fluid">
@@ -31,11 +17,11 @@
                     <div class="col-md-6 p-0">
                         <h2>BOQ Management</h2>
                     </div>
-                    <!-- <div class="col-md-6 pt-2 text-right">
-                        <button class="btn btn-primary btn-sm float-right ml-2 font-12 font-weight-bold" data-toggle="modal" data-target="#add-location-modal">
-                            <i class="fas fa-plus"></i> Add Location
+                    <div class="col-md-6 pt-2 text-right">
+                        <button class="btn btn-primary btn-sm float-right ml-2 font-12 font-weight-bold" onclick="openAddBOQModal();">
+                            <i class="fas fa-plus"></i> Add BOQ
                         </button>
-                    </div> -->
+                    </div>
                 </div>
 
                 <!-- BOQ Table -->
@@ -50,7 +36,7 @@
                                         <th width="60%" id="description">Description</th>
                                         <th width="10%" class="text-center" id="unit">Unit</th>
                                         @if($user_data['user_role'] == 'admin')
-                                            <!-- <th width="5%" class="text-center" id="actions">Actions</th> -->
+                                            <th width="10%" class="text-center" id="actions">Actions</th>
                                         @endif
                                     </tr>
                                 </thead>
@@ -63,10 +49,10 @@
                                                 <td>{{ $value['description'] }}</td>
                                                 <td class="text-center text-uppercase">{{ $value['unit'] }}</td>
                                                 @if($user_data['user_role'] == 'admin')
-                                                    <!-- <td class="text-center">
-                                                        <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['control_number'] }}"><i class="fas fa-edit"></i></button>
-                                                        <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['control_number'] }}"><i class="far fa-trash-alt"></i></button>
-                                                    </td> -->
+                                                    <td class="text-center">
+                                                        <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Update {{ $value['control_number'] }}" onclick="openUpdateBOQModal('{{ $value['control_number'] }}');"><i class="fas fa-edit"></i></button>
+                                                        <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete {{ $value['control_number'] }}" onclick="openDeleteBOQModal('{{ $value['control_number'] }}');"><i class="far fa-trash-alt"></i></button>
+                                                    </td>
                                                 @endif
                                             </tr>
                                         @endforeach
@@ -77,6 +63,46 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal" id="add-boq-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Add BOQ</h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label>Control Number</label>
+                        <input type="number" id="control_number" class="form-control" placeholder="Ex: 11101">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Unit</label>
+                        <input type="text" id="unit" class="form-control text-uppercase" placeholder="Ex: UNIT">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label>Description</label>
+                        <textarea class="form-control" id="boq_description" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="saveNewBOQ();">Save</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal" onclick="clearFields();">Close</button>
+            </div>
+
         </div>
     </div>
 </div>
@@ -94,6 +120,75 @@
         $('#boq-table').DataTable({
             "order": []
         });
+    }
+
+    function openAddBOQModal()
+    {
+        $('#add-boq-modal').modal({keyboard:false,backdrop:"static"});
+        $('#control_number, #unit, #boq_description').val('');
+    }
+
+    function saveNewBOQ()
+    {
+        $.ajax({
+            url: "{{ url('save-new-boq') }}",
+            data: {
+                "control_number" : $('#control_number').val(),
+                "unit" : $('#unit').val(),
+                "description" : $('#boq_description').val()
+            },
+        })
+        .done(function(response) {
+            if(response['result'] == true)
+            {
+                $('#boq-table').DataTable().clear();
+                $('#boq-table').DataTable().destroy();
+                $('#boq-table tbody').empty();
+                $.each(response['boq'], function(index, el) {
+                    var updateBOQ = "openUpdateBOQModal('"+el['id']+"','"+el['material_code']+"')";
+                    var deleteBOQ = "openUpdateBOQModal('"+el['id']+"','"+el['material_code']+"')";
+                    var rows = '<tr>\
+                                    <td hidden>'+el['id']+'</td>\
+                                    <td>'+el['control_number']+'</td>\
+                                    <td>'+el['description']+'</td>\
+                                    <td class="text-center text-uppercase">'+el['unit']+'</td>\
+                                    <td class="text-center">\
+                                        <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="" data-original-title="Update '+el['id']+'" onclick="'+updateBOQ+'"><i class="fas fa-edit"></i></button>\
+                                        <button class="btn btn-sm btn-danger" data-toggle="tooltip" title="" data-original-title="Delete '+el['id']+'" onclick="'+deleteBOQ+'"><i class="far fa-trash-alt"></i></button>\
+                                    </td>\
+                                </tr>';
+                    $('#boq-table tbody').append(rows);
+                });
+                InitiateBOQTable();
+
+                $('.alert-success').empty().text('BOQ successfully added!').removeClass('d-none');
+                setTimeout(function() {
+                    $('.alert-success').addClass('d-none')
+                }, 10000);
+            }
+            else if(response == 'taken')
+            {
+                $('.alert-danger').empty().text('That Control Number already exists!').removeClass('d-none');
+                setTimeout(function() {
+                    $('.alert-danger').addClass('d-none')
+                }, 10000);
+            }
+            else
+            {
+                $('.alert-danger').empty().text('Something went wrong. Please try again.').removeClass('d-none');
+                setTimeout(function() {
+                    $('.alert-danger').addClass('d-none')
+                }, 10000);  
+            }
+        })
+        .fail(function() {
+            console.log("error");
+        });
+    }
+
+    function clearFields()
+    {
+        $('#control_number, #unit, #boq_description').val('');
     }
 </script>
 @endsection

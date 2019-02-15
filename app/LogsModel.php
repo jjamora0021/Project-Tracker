@@ -202,6 +202,20 @@ class LogsModel extends Model
             ]);
     }
 
+    // Create Add BOQ Logs
+    public function createBOQCreationLog($user_data, $timestamp, $details)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Added BOQ',
+                'project_code' => NULL,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
+
     // Create Update BOM Logs
     public function createUpdateBOMLog($user_data, $timestamp, $details)
     {
@@ -216,12 +230,40 @@ class LogsModel extends Model
             ]);
     }
 
+    // Create Update BOM Logs
+    public function createUpdateBOQLog($user_data, $timestamp, $details)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Updated BOQ',
+                'project_code' => NULL,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
+
     // Create Delete BOM Logs
     public function createDeleteBOMLog($user_data, $timestamp, $details)
     {
         $logs = $this::insert([
                 'username' => $user_data['username'],
                 'action' => 'Deleted BOM',
+                'project_code' => NULL,
+                'details' => json_encode($details),
+                'user_role_given' => $user_data['user_role'],
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp
+            ]);
+    }
+
+    // Create Delete BOQ Logs
+    public function createDeleteBOQLog($user_data, $timestamp, $details)
+    {
+        $logs = $this::insert([
+                'username' => $user_data['username'],
+                'action' => 'Deleted BOQ',
                 'project_code' => NULL,
                 'details' => json_encode($details),
                 'user_role_given' => $user_data['user_role'],

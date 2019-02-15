@@ -35,4 +35,65 @@ class BOQModel extends Model
             return false;
         }
     }
+
+    public function checkIfBoqExists($code)
+    {
+        $result = ($this::where('control_number',$code)->get())->toArray();
+        
+        if(empty($result) == true)
+        {
+            return 'available';
+        }
+        else
+        {
+            return 'taken';
+        }
+    }
+
+    public function saveBOQ($user_data, $timestamp, $data)
+    {
+        $check = $this->checkIfBoqExists($data['control_number']);
+        if($check == 'available')
+        {
+            $save = $this::insert([$data]);
+            if($save)
+            {
+                return 'true';
+            }
+            else
+            {
+                return 'false';
+            }
+        }
+        else
+        {
+            return 'taken';
+        }
+    }
+
+    public function updateBOQDetails($data)
+    {
+        $update = $this::where('control_number',$data['control_number'])->update($data);
+        if($update)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public function deleteBOQ($data)
+    {
+        $delete = $this::where('id',$data['id'])->where('control_number',$data['control_number'])->delete();
+        if($delete)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

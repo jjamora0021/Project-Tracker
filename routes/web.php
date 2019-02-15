@@ -56,6 +56,8 @@ Route::get('boq-management', 'BOQManagementController@index');
 Route::get('get-boq-details', 'BOQManagementController@getBoqDetails');
 // Get All BOQs
 Route::get('get-all-boqs', 'BOQManagementController@getAllBOQs');
+// Save BOQ
+Route::get('save-new-boq', 'BOQManagementController@saveBOQ');
 
 /**
  * Projects
