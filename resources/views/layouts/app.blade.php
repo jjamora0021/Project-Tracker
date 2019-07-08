@@ -25,7 +25,7 @@
 <body id="page-top">
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top" id="top-navbar">
         <a class="navbar-brand" href="{{ url('/') }}">
-            <img src="{{ url('images/logo/header-logo.png') }}" width="80px">
+            <img src="{{ url('images/logo/header-logo.png') }}" width="80px" class="mr-3">
             Project Tracker
         </a>
 
