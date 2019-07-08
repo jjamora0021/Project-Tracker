@@ -147,8 +147,9 @@ class ProjectsModel extends Model
 
         if($result)
         {
-            DB::table('daily_progress')->where('project_id',$data['id'])->where('project_code',$data['project_code'])->detele();
-            DB::table('daily_progress_remarks')->where('project_id',$data['id'])->where('project_code',$data['project_code'])->detele();
+            $delete_progress = DB::table('daily_progress')->where('project_id',$data['id'])->where('project_code',$data['project_code'])->delete();
+            $delete_remarks = DB::table('daily_progress_remarks')->where('project_id',$data['id'])->where('project_code',$data['project_code'])->delete();
+
             return true;
         }
         else
