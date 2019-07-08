@@ -48,6 +48,7 @@ class DailyProgressController extends Controller
     // Save Daily Progress
     public function saveDailyProgress(Request $request)
     {
+        // dd($request['progress']);
         $user_data = Session::get('user')[0];
         $now = Carbon::now();
 

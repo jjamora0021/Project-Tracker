@@ -45,12 +45,12 @@
                             <li class="nav-item">
                                 <a class="nav-link active" data-toggle="tab" href="#for-approval" style="color: #007bff !important; font-weight: 700">For Approval</a>
                             </li>
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#approved" style="color: #28a745 !important; font-weight: 700">Approved</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#denied" style="color: #c82333 !important; font-weight: 700">Denied</a>
-                            </li>
+                            </li> -->
                         </ul>
 
                         <!-- Tab panes -->

@@ -156,6 +156,7 @@
 
     function addRemarks(id, project_code, boq_controlnumber, day_number, boq_description)
     {
+        $('#add-remarks-modal .modal-body #comment').focus();
         $('#add-remarks-modal #boq-controlnumber').val(boq_controlnumber);
         $('#add-remarks-modal #boq-description').val(boq_description);
         $('#add-remarks-modal #project-id').val(id);

@@ -775,7 +775,7 @@
         var day_number =  parseInt($(modal+' #day-num').val()); 
         var progress_input =  parseInt($.trim($(modal+' #progress').val()));
 
-        var td_number = day_number + 1;
+        var td_number = day_number + 2;
         $('tr#'+boq_control_number+' td:nth-child('+td_number+')').text(progress_input);
         $(modal+' #progress').val('');
 
@@ -787,7 +787,7 @@
             progress.push(parseInt($('tr#'+boq_control_number+' #td-'+i+'.day-progress').text()));
             total += parseInt($('tr#'+boq_control_number+' #td-'+i+'.day-progress').text());
         }
-
+        
         $('tr#'+boq_control_number+' td:last-child').text(total);
 
         // var total_project_progress = 0;
